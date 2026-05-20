@@ -23,6 +23,18 @@ export default function Portfolio() {
   const timelineRef = useRef<HTMLDivElement>(null);
   const [heroProgress, setHeroProgress] = useState(0);
   const [timelineProgress, setTimelineProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Responsive device verification listener
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); // 768px corresponds to Tailwind's md breakpoint
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Initial initialization check
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const careerTracks: CareerEvent[] = [
     {
@@ -96,7 +108,9 @@ export default function Portfolio() {
     setTimeout(() => setStatus('success'), 1000);
   };
 
+  // Dynamic Scroll Matrix Parsers - Applied exclusively on Desktop
   const getIdentityStyles = () => {
+    if (isMobile) return {};
     if (heroProgress <= 0.20) {
       const factor = heroProgress / 0.20;
       return {
@@ -134,6 +148,7 @@ export default function Portfolio() {
   };
 
   const getLeftCardStyles = () => {
+    if (isMobile) return {};
     if (heroProgress < 0.20) {
       return { opacity: 0, transform: 'translate(-50%, -50%) scale(0.95)', left: '50%', top: '48%', position: 'fixed' as const };
     }
@@ -167,6 +182,7 @@ export default function Portfolio() {
   };
 
   const getRightCardStyles = () => {
+    if (isMobile) return {};
     if (heroProgress < 0.45) {
       return { opacity: 0, transform: 'translate(-50%, -50%) scale(0.95)', left: '50%', top: '48%', position: 'fixed' as const };
     }
@@ -200,6 +216,7 @@ export default function Portfolio() {
   };
 
   const getInnovationCardStyles = () => {
+    if (isMobile) return {};
     if (heroProgress < 0.70) {
       return { opacity: 0, transform: 'translate(-50%, -30%)', left: '50%', top: '65%', position: 'fixed' as const };
     }
@@ -229,14 +246,14 @@ export default function Portfolio() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
       
-      {/* HEADER: Solidified background layout opacity to neutralize ambient light leaks */}
-      <header className="border-b border-slate-900 bg-slate-950/95 backdrop-blur-md sticky top-0 z-50 px-4 py-3">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
+      {/* HEADER: Fully responsive text container alignment parameters */}
+      <header className="border-b border-slate-900 bg-slate-950/95 backdrop-blur-md sticky top-0 z-50 px-4 py-4">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
           <div className="flex items-center gap-2.5 font-mono text-xs tracking-wider">
             <Terminal size={14} className="text-cyan-400" />
             <span className="font-bold text-white uppercase">HAMZA_AHMED_KHAN.sys</span>
           </div>
-          <nav className="flex gap-4 font-mono text-[11px] text-slate-400">
+          <nav className="flex gap-6 font-mono text-[11px] text-slate-400">
             <a href="#core-story" className="hover:text-cyan-400 transition-colors">./Timeline</a>
             <a href="#career-work" className="hover:text-cyan-400 transition-colors">./Experience</a>
             <a href="#architecture-panel" className="hover:text-cyan-400 transition-colors">./Architecture</a>
@@ -244,101 +261,144 @@ export default function Portfolio() {
         </div>
       </header>
 
-      <div ref={heroRef} id="core-story" className="relative h-[450vh] w-full bg-slate-950">
-        <div className="sticky top-0 left-0 h-screen w-full overflow-hidden bg-slate-950">
+      {/* HERO REGION BLOCK: Handles normal positioning on mobile and complex scrolling arrays on desktop */}
+      <div 
+        ref={heroRef} 
+        id="core-story" 
+        className={`relative ${isMobile ? 'min-h-screen py-16 flex items-center' : 'h-[450vh]'} w-full bg-slate-950`}
+      >
+        <div className={`${isMobile ? 'relative w-full px-4' : 'sticky top-0 left-0 h-screen w-full overflow-hidden'} bg-slate-950`}>
           
-          {/* OPTION A: REVEALED NATURAL MEDIA COLORS (Opacity elevated to 0.75, mix-blend-normal)
-          <img 
-            src="/AI-robot.gif" 
-            alt="Cybernetic Asset Vector Node" 
-            className="absolute inset-0 w-full h-full object-cover object-center opacity-[0.75] pointer-events-none mix-blend-normal z-0 transition-transform duration-75"
-            style={{ 
-              transform: `scale(${1 + heroProgress * 0.04})`
-            }}
-          /> */}
-
-          {/* ALTERNATIVE: Un-comment this video block if you choose to use the MP4 version instead of the GIF */}
+          {/* Ambient Video Viewport Backdrop */}
           <video
             src="/AI-robot-2.mp4"
             autoPlay
             loop
             muted
             playsInline
-            className="absolute inset-0 w-full h-full object-cover object-center opacity-[0.75] pointer-events-none mix-blend-normal z-0 transition-transform duration-75"
-            style={{ 
-              transform: `scale(${1 + heroProgress * 0.04})`
-            }}
+            className="absolute inset-0 w-full h-full object-cover object-center opacity-[0.5] md:opacity-[0.75] pointer-events-none mix-blend-normal z-0 transition-transform duration-75"
+            style={isMobile ? {} : { transform: `scale(${1 + heroProgress * 0.04})` }}
           /> 
          
+          {/* MOBILE CONTENT LAYOUT (Stacked, scrolling naturally) */}
+          {isMobile ? (
+            <div className="relative z-40 space-y-8 font-mono text-center pt-6 pb-12">
+              <div>
+                <span className="text-[10px] text-cyan-400 tracking-[0.3em] uppercase block mb-1.5">[ SYSTEM PROFILE CORE ]</span>
+                <h1 className="text-3xl font-black tracking-tight text-white uppercase drop-shadow-[0_0_20px_rgba(6,182,212,0.35)]">
+                  Hamza Ahmed Khan
+                </h1>
+                <p className="text-xs text-slate-100 uppercase tracking-[0.25em] mt-2 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  AI / ML & Software Engineer
+                </p>
+                <div className="w-12 h-[2px] bg-cyan-500/60 mx-auto mt-4" />
+              </div>
 
-          {/* CLEANED OVERLAYS: Slate gradients completely removed here to fully preserve original colors without shifting blue */}
+              <div className="grid grid-cols-1 gap-4 max-w-sm mx-auto">
+                <div className="bg-slate-900/90 border border-slate-800/80 p-5 rounded-xl shadow-2xl text-center">
+                  <span className="text-[9px] text-cyan-500 tracking-[0.2em] uppercase mb-1 block">[ SYSTEM_TENURE ]</span>
+                  <div className="flex items-baseline justify-center">
+                    <span className="text-5xl font-black text-white">5</span>
+                    <span className="text-2xl font-black text-cyan-400 animate-pulse ml-0.5">+</span>
+                    <span className="text-xs font-bold text-slate-400 ml-1.5 uppercase">Years</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">AI & Development Ops</p>
+                </div>
 
-          {/* HUD Content Display Elements */}
-          <div style={getIdentityStyles()} className="z-40 px-4 font-mono transition-all duration-75 ease-out">
-            <span className="text-[10px] text-cyan-400 tracking-[0.3em] uppercase block mb-1.5">[ SYSTEM PROFILE CORE ]</span>
-            <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white uppercase drop-shadow-[0_0_20px_rgba(6,182,212,0.35)]">
-              Hamza Ahmed Khan
-            </h1>
-            <p className="text-xs md:text-sm text-slate-100 uppercase tracking-[0.25em] mt-2 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-              AI / ML & Software Engineer
-            </p>
-            <div className="w-12 h-[2px] bg-cyan-500/60 mx-auto mt-4" />
-          </div>
+                <div className="bg-slate-900/90 border border-slate-800/80 p-5 rounded-xl shadow-2xl text-center">
+                  <span className="text-[9px] text-teal-400 tracking-[0.2em] uppercase mb-2 block">[ CORE_SYSTEM ]</span>
+                  <h3 className="text-xs font-extrabold text-white uppercase tracking-wider leading-tight">
+                    Python, Next.js,<br />C# .NET & Node.js
+                  </h3>
+                  <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">
+                    Architecting privacy-first intelligence arrays and web nodes.
+                  </p>
+                </div>
 
-          <div style={getLeftCardStyles()} className="z-30 w-[85%] md:w-[26%] bg-slate-900/95 border border-slate-800/80 backdrop-blur-md rounded-xl p-5 shadow-2xl font-mono text-center transition-all duration-75 ease-out">
-            <span className="text-[9px] text-cyan-500 tracking-[0.2em] uppercase mb-1 block">[ SYSTEM_TENURE ]</span>
-            <div className="flex items-baseline justify-center">
-              <span className="text-5xl md:text-6xl font-black text-white">5</span>
-              <span className="text-2xl font-black text-cyan-400 animate-pulse ml-0.5">+</span>
-              <span className="text-xs font-bold text-slate-400 ml-1.5 uppercase">Years</span>
+                <div className="bg-slate-900/90 border border-purple-900/40 p-5 rounded-xl shadow-2xl text-center">
+                  <span className="text-[9px] text-purple-400 tracking-[0.25em] uppercase mb-1 block">[ SECTOR SPECIALIZATION ]</span>
+                  <h3 className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 uppercase">
+                    Innovation with AI
+                  </h3>
+                  <p className="text-[10px] text-slate-300 uppercase tracking-wider mt-0.5">German Legal Tech & RAG</p>
+                  <p className="text-[10px] text-slate-400 mt-2 font-sans leading-relaxed">
+                    GDPR document anonymization, custom BERT models, and class-based vector indexing.
+                  </p>
+                </div>
+              </div>
             </div>
-            <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">AI & Development Ops</p>
-          </div>
+          ) : (
+            /* DESKTOP DESIGNS - ANIMATING IN SYNC WITH INTERPOLATION FUNCTIONS */
+            <>
+              <div style={getIdentityStyles()} className="z-40 px-4 font-mono transition-all duration-75 ease-out">
+                <span className="text-[10px] text-cyan-400 tracking-[0.3em] uppercase block mb-1.5">[ SYSTEM PROFILE CORE ]</span>
+                <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white uppercase drop-shadow-[0_0_20px_rgba(6,182,212,0.35)]">
+                  Hamza Ahmed Khan
+                </h1>
+                <p className="text-xs md:text-sm text-slate-100 uppercase tracking-[0.25em] mt-2 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  AI / ML & Software Engineer
+                </p>
+                <div className="w-12 h-[2px] bg-cyan-500/60 mx-auto mt-4" />
+              </div>
 
-          <div style={getRightCardStyles()} className="z-30 w-[85%] md:w-[26%] bg-slate-900/95 border border-slate-800/80 backdrop-blur-md rounded-xl p-5 shadow-2xl font-mono text-center transition-all duration-75 ease-out">
-            <span className="text-[9px] text-teal-400 tracking-[0.2em] uppercase mb-2 block">[ CORE_SYSTEM ]</span>
-            <h3 className="text-sm font-extrabold text-white uppercase tracking-wider leading-tight">
-              Python, Next.js,<br />C# .NET & Node.js
-            </h3>
-            <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">
-              Architecting privacy-first intelligence arrays and web nodes.
-            </p>
-          </div>
+              <div style={getLeftCardStyles()} className="z-30 w-[26%] bg-slate-900/95 border border-slate-800/80 backdrop-blur-md rounded-xl p-5 shadow-2xl font-mono text-center transition-all duration-75 ease-out">
+                <span className="text-[9px] text-cyan-500 tracking-[0.2em] uppercase mb-1 block">[ SYSTEM_TENURE ]</span>
+                <div className="flex items-baseline justify-center">
+                  <span className="text-6xl font-black text-white">5</span>
+                  <span className="text-2xl font-black text-cyan-400 animate-pulse ml-0.5">+</span>
+                  <span className="text-xs font-bold text-slate-400 ml-1.5 uppercase">Years</span>
+                </div>
+                <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">AI & Development Ops</p>
+              </div>
 
-          <div style={getInnovationCardStyles()} className="z-30 w-[88%] md:w-[32%] bg-slate-900/95 border border-purple-900/40 backdrop-blur-md rounded-xl p-5 shadow-2xl font-mono text-center transition-all duration-75 ease-out">
-            <span className="text-[9px] text-purple-400 tracking-[0.25em] uppercase mb-1 block">[ SECTOR SPECIALIZATION ]</span>
-            <h3 className="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 uppercase">
-              Innovation with AI
-            </h3>
-            <p className="text-[10px] text-slate-300 uppercase tracking-wider mt-0.5">German Legal Tech & RAG</p>
-            <p className="text-[10px] text-slate-400 mt-2 font-sans leading-relaxed">
-              GDPR document anonymization, custom BERT models, and class-based vector indexing.
-            </p>
-          </div>
+              <div style={getRightCardStyles()} className="z-30 w-[26%] bg-slate-900/95 border border-slate-800/80 backdrop-blur-md rounded-xl p-5 shadow-2xl font-mono text-center transition-all duration-75 ease-out">
+                <span className="text-[9px] text-teal-400 tracking-[0.2em] uppercase mb-2 block">[ CORE_SYSTEM ]</span>
+                <h3 className="text-sm font-extrabold text-white uppercase tracking-wider leading-tight">
+                  Python, Next.js,<br />C# .NET & Node.js
+                </h3>
+                <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">
+                  Architecting privacy-first intelligence arrays and web nodes.
+                </p>
+              </div>
+
+              <div style={getInnovationCardStyles()} className="z-30 w-[32%] bg-slate-900/95 border border-purple-900/40 backdrop-blur-md rounded-xl p-5 shadow-2xl font-mono text-center transition-all duration-75 ease-out">
+                <span className="text-[9px] text-purple-400 tracking-[0.25em] uppercase mb-1 block">[ SECTOR SPECIALIZATION ]</span>
+                <h3 className="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 uppercase">
+                  Innovation with AI
+                </h3>
+                <p className="text-[10px] text-slate-300 uppercase tracking-wider mt-0.5">German Legal Tech & RAG</p>
+                <p className="text-[10px] text-slate-400 mt-2 font-sans leading-relaxed">
+                  GDPR document anonymization, custom BERT models, and class-based vector indexing.
+                </p>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
       <div className="relative z-50 bg-slate-950 border-t border-slate-900/60">
         
-        <section id="career-work" ref={timelineRef} className="max-w-5xl mx-auto px-4 py-32 relative">
-          <div className="text-center mb-24 font-mono">
+        {/* TIMELINE SECTION ELEMENT: Fully responsive alignment parameters built from scratch */}
+        <section id="career-work" ref={timelineRef} className="max-w-5xl mx-auto px-4 py-24 relative">
+          <div className="text-center mb-16 font-mono">
             <div className="text-[10px] text-cyan-400 tracking-[0.2em] uppercase mb-2">[ HISTORICAL LEDGER ]</div>
             <h2 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tight">My Career and Work</h2>
             <p className="text-xs text-slate-500 mt-1">Tracing engineering milestones & corporate history.</p>
           </div>
 
           <div className="relative w-full">
-            <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-slate-900 -translate-x-1/2 z-0" />
+            {/* Middle tracking line hidden on mobile, rendered cleanly on desktop layouts */}
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-slate-900 -translate-x-1/2 z-0" />
             
             <div 
               style={{ height: `${timelineProgress * 100}%` }}
-              className="absolute left-1/2 top-0 w-[2px] bg-gradient-to-b from-teal-400 to-emerald-400 -translate-x-1/2 z-10 origin-top shadow-[0_0_12px_#14b8a6]"
+              className="hidden md:block absolute left-1/2 top-0 w-[2px] bg-gradient-to-b from-teal-400 to-emerald-400 -translate-x-1/2 z-10 origin-top shadow-[0_0_12px_#14b8a6]"
             >
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-teal-300 shadow-[0_0_15px_#22d3ee] animate-ping" />
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_#fff]" />
             </div>
 
-            <div className="space-y-16 relative z-20">
+            <div className="space-y-12 relative z-20">
               {careerTracks.map((event, index) => {
                 const isLeft = index % 2 === 0;
                 return (
@@ -349,13 +409,13 @@ export default function Portfolio() {
                           {event.period}
                         </span>
                         <h3 className="text-base font-black text-white uppercase mt-3">{event.role}</h3>
-                        <div className="flex justify-between text-[11px] text-slate-400 font-medium mb-2">
+                        <div className="flex flex-col sm:flex-row sm:justify-between text-[11px] text-slate-400 font-medium mb-2 gap-1 sm:gap-0">
                           <span>{event.company}</span>
                           <span className="text-slate-500">{event.location}</span>
                         </div>
                         <p className="text-[11px] text-slate-500 font-sans leading-relaxed mb-4">{event.summary}</p>
                         
-                        <div className="border-t border-slate-900/80 pt-3 space-y-1.5">
+                        <div className="border-t border-slate-900/80 pt-3 space-y-2">
                           {event.metrics.map((metric, mi) => (
                             <div key={mi} className="flex gap-2 items-start text-[10px]">
                               <ChevronRight size={12} className="text-teal-400 shrink-0 mt-0.5" />
@@ -374,11 +434,13 @@ export default function Portfolio() {
           </div>
         </section>
 
-        <section id="architecture-panel" className="max-w-6xl mx-auto px-4 py-20">
+        {/* TECH STACK INTERACTIVE SECTION BLOCK */}
+        <section id="architecture-panel" className="max-w-6xl mx-auto px-4 py-16">
           <TechStack3D />
         </section>
 
-        <section className="max-w-6xl mx-auto px-4 py-20 space-y-8">
+        {/* TELEMETRY SECTION BLOCK */}
+        <section className="max-w-6xl mx-auto px-4 py-16 space-y-8">
           <div className="text-center font-mono">
             <div className="text-[10px] text-purple-400 tracking-[0.2em] uppercase mb-2">[ RESEARCH HUD & HARDWARE TELEMETRY ]</div>
             <h2 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tight">Enterprise Deployment Telemetry</h2>
@@ -386,40 +448,44 @@ export default function Portfolio() {
           <LedTrainingScreen />
         </section>
 
-        <section className="max-w-4xl mx-auto px-4 py-12 text-center font-mono text-[11px] border-t border-b border-slate-900/60 text-slate-400 grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="flex flex-col items-center p-3 bg-slate-900/20 rounded-xl">
+        {/* PERSONAL METADATA HUD BAR: Rearranged grid layout parameters to allow smooth mobile scaling */}
+        <section className="max-w-4xl mx-auto px-4 py-12 text-center font-mono text-[11px] border-t border-b border-slate-900/60 text-slate-400 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="flex flex-col items-center p-4 bg-slate-900/20 rounded-xl">
             <MapPin size={16} className="text-cyan-400 mb-1" />
             <span className="font-bold text-white text-xs mb-0.5">Location Base</span>
             <span>Berlin, Germany</span>
           </div>
-          <div className="flex flex-col items-center p-3 bg-slate-900/20 rounded-xl">
+          <div className="flex flex-col items-center p-4 bg-slate-900/20 rounded-xl">
             <Phone size={16} className="text-teal-400 mb-1" />
             <span className="font-bold text-white text-xs mb-0.5">Telecom Node</span>
             <span>+4917661967247</span>
           </div>
-          <div className="flex flex-col items-center p-3 bg-slate-900/20 rounded-xl">
+          <div className="flex flex-col items-center p-4 bg-slate-900/20 rounded-xl">
             <Terminal size={16} className="text-purple-400 mb-1" />
             <span className="font-bold text-white text-xs mb-0.5">Languages Spoken</span>
             <span>English (C1) // German (A2/B1)</span>
           </div>
         </section>
 
+        {/* SECURE PACKET HANDSHAKE RECEPTACLE CONTACT PANEL */}
         <section className="max-w-xl mx-auto px-4 py-20 font-mono">
-          <div className="bg-slate-900/60 border border-slate-900 rounded-2xl p-6 backdrop-blur-md shadow-2xl">
+          <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-2xl">
             <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase mb-4 tracking-widest">
               <Terminal size={14} />
               <span>[ SECURE SYSTEM HANDSHAKE ]</span>
             </div>
-            <div className="flex justify-center gap-6 mb-6 pb-4 border-b border-slate-900">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-6 mb-6 pb-5 border-b border-slate-900 text-center sm:text-left">
               <a href="mailto:hamykhan786@gmail.com" className="text-slate-400 hover:text-cyan-400 flex items-center gap-1.5 transition-colors text-xs">
                 <Mail size={14} /> hamykhan786@gmail.com
               </a>
-              <a href="https://linkedin.com/in/hamy-khan-0a9b5275" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 flex items-center gap-1.5 transition-colors text-xs">
-                <Terminal size={14} className="text-blue-400" /> LinkedIn
-              </a>
-              <a href="https://github.com/HamzaAhmedKhan786" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-purple-400 flex items-center gap-1.5 transition-colors text-xs">
-                <Terminal size={14} className="text-purple-400" /> GitHub
-              </a>
+              <div className="flex gap-6">
+                <a href="https://linkedin.com/in/hamy-khan-0a9b5275" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 flex items-center gap-1.5 transition-colors text-xs">
+                  <Terminal size={14} className="text-blue-400" /> LinkedIn
+                </a>
+                <a href="https://github.com/HamzaAhmedKhan786" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-purple-400 flex items-center gap-1.5 transition-colors text-xs">
+                  <Terminal size={14} className="text-purple-400" /> GitHub
+                </a>
+              </div>
             </div>
             <form onSubmit={handleContactSubmit} className="space-y-4">
               <input 
