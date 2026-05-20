@@ -1,303 +1,456 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Terminal, CheckCircle, Loader2, Cpu, Shield, Database, Radio, Brain } from 'lucide-react';
-
-// Foolproof relative imports to prevent Vercel path-alias lookup crashes
-import TechStack3D from '../components/TechStack3D';
-import CyberneticFace from '../components/CyberneticFace';
+import React, { useState, useEffect, useRef } from 'react';
+import { Terminal, CheckCircle, Loader2, ChevronRight, Mail, Phone, MapPin } from 'lucide-react';
 import LedTrainingScreen from '../components/LedTrainingScreen';
+import TechStack3D from '../components/TechStack3D';
+
+interface CareerEvent {
+  period: string;
+  role: string;
+  company: string;
+  location: string;
+  summary: string;
+  metrics: string[];
+}
 
 export default function Portfolio() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  
+  const heroRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const [heroProgress, setHeroProgress] = useState(0);
+  const [timelineProgress, setTimelineProgress] = useState(0);
+
+  const careerTracks: CareerEvent[] = [
+    {
+      period: "Oct 2022 – Feb 2026",
+      role: "Software & AI/ML Engineer",
+      company: "Jurasoft GmbH (RA-Micro)",
+      location: "Berlin, Germany",
+      summary: "Architected privacy-first intelligent systems for the German Legal Tech sector. Spearheaded real-time virtual avatar pipelines and production local LLM / RAG infrastructures.",
+      metrics: [
+        "Integrated Whisper AI, WebRTC, and Simli for low-latency lip-synced multi-persona avatar responses (AI Tilda, Peter, Mary).",
+        "Built Jura-KI desktop application featuring local LLMs and a custom BERT-based NER engine for GDPR-compliant anonymization.",
+        "Developed highly scalable RAG pipelines using OpenWebUI, FAISS, and Qdrant with class-based indexing for 8GB+ legal datasets.",
+        "Automated legacy migrations by engineering a C# code converter to transition VB/VBA architectures to modern .NET networks."
+      ]
+    },
+    {
+      period: "Jan 2019 – Sep 2019",
+      role: "Software Engineer",
+      company: "Euronet Worldwide",
+      location: "Karachi, Pakistan",
+      summary: "Engineered secure high-volume transaction banking modules and structured low-latency backend transactional infrastructure reporting logs.",
+      metrics: [
+        "Developed secure transactional modules using ASP.NET MVC and C# with embedded real-time fraud prevention filters.",
+        "Managed complex MsSQL environments utilizing custom stored procedures and triggers to process massive real-time analytical logs.",
+        "Maintained 24/7 high availability across ATM and POS financial network operations through live monitoring tools."
+      ]
+    },
+    {
+      period: "Oct 2017 – Jan 2019",
+      role: "Software Engineer",
+      company: "SalTec Powerlink",
+      location: "Karachi, Pakistan",
+      summary: "Developed hardware/software configurations and remote systems tracking arrays for industrial electrical infrastructure deployments.",
+      metrics: [
+        "Built WPF configuration utilities from scratch for remote device optimization over industrial Wi-Fi, Ethernet, and REST/RPC layouts.",
+        "Refactored real-time telemetry pipelines tracking heavy industrial systems (Grid, Genset, industrial UPS/Batteries).",
+        "Formulated modular test configurations inside Agile workflows using JIRA tracking blocks to maintain target operational standards."
+      ]
+    }
+  ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (heroRef.current) {
+        const rect = heroRef.current.getBoundingClientRect();
+        const totalHeight = rect.height - window.innerHeight;
+        if (totalHeight > 0) {
+          const progress = Math.min(Math.max(-rect.top / totalHeight, 0), 1);
+          setHeroProgress(progress);
+        }
+      }
+
+      if (timelineRef.current) {
+        const rect = timelineRef.current.getBoundingClientRect();
+        const triggerOffset = window.innerHeight * 0.6;
+        const totalHeight = rect.height;
+        const relativeScroll = triggerOffset - rect.top;
+        const progress = Math.min(Math.max(relativeScroll / totalHeight, 0), 1);
+        setTimelineProgress(progress);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, message }),
-      });
-      if (res.ok) {
-        setStatus('success');
-        setEmail('');
-        setMessage('');
-      } else {
-        setStatus('error');
-      }
-    } catch (error) {
-      setStatus('error');
+    setTimeout(() => setStatus('success'), 1000);
+  };
+
+  const getIdentityStyles = () => {
+    if (heroProgress <= 0.20) {
+      const factor = heroProgress / 0.20;
+      return {
+        position: 'fixed' as const,
+        top: `${50 - factor * 32}%`,
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        textAlign: 'center' as const,
+        width: '100%',
+        opacity: 1,
+      };
+    } else if (heroProgress > 0.20 && heroProgress <= 0.85) {
+      return {
+        position: 'fixed' as const,
+        top: '18%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        textAlign: 'center' as const,
+        width: '100%',
+        opacity: 1,
+      };
+    } else {
+      const factor = (heroProgress - 0.85) / 0.15;
+      return {
+        position: 'fixed' as const,
+        top: '18%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        textAlign: 'center' as const,
+        width: '100%',
+        opacity: Math.max(0, 1 - factor * 2),
+        pointerEvents: 'none' as const,
+      };
     }
   };
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-teal-500/30 selection:text-teal-200 overflow-x-hidden relative">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+  const getLeftCardStyles = () => {
+    if (heroProgress < 0.20) {
+      return { opacity: 0, transform: 'translate(-50%, -50%) scale(0.95)', left: '50%', top: '48%', position: 'fixed' as const };
+    }
+    if (heroProgress >= 0.20 && heroProgress <= 0.45) {
+      const factor = (heroProgress - 0.20) / 0.25;
+      return {
+        opacity: 1,
+        transform: 'translate(-50%, -50%)',
+        left: `${50 - factor * 32}%`,
+        top: '48%',
+        position: 'fixed' as const,
+      };
+    }
+    if (heroProgress > 0.45 && heroProgress <= 0.85) {
+      return {
+        opacity: 1,
+        transform: 'translate(-50%, -50%)',
+        left: '18%',
+        top: '48%',
+        position: 'fixed' as const,
+      };
+    }
+    const factor = (heroProgress - 0.85) / 0.15;
+    return {
+      opacity: Math.max(0, 1 - factor * 2),
+      transform: 'translate(-50%, -50%)',
+      left: '18%',
+      top: '48%',
+      position: 'fixed' as const,
+    };
+  };
 
-      {/* HEADER BAR */}
-      <header className="border-b border-slate-900 bg-slate-950/70 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center font-mono font-bold text-slate-950 text-sm shadow-md">
-              HZ
-            </div>
-            <div>
-              <span className="font-bold text-sm tracking-tight block text-white">Hamza Zaidi</span>
-              <span className="text-[10px] font-mono text-slate-400 block tracking-wider uppercase">AI Engineering Node // Berlin</span>
-            </div>
+  const getRightCardStyles = () => {
+    if (heroProgress < 0.45) {
+      return { opacity: 0, transform: 'translate(-50%, -50%) scale(0.95)', left: '50%', top: '48%', position: 'fixed' as const };
+    }
+    if (heroProgress >= 0.45 && heroProgress <= 0.70) {
+      const factor = (heroProgress - 0.45) / 0.25;
+      return {
+        opacity: 1,
+        transform: 'translate(-50%, -50%)',
+        left: `${50 + factor * 32}%`,
+        top: '48%',
+        position: 'fixed' as const,
+      };
+    }
+    if (heroProgress > 0.70 && heroProgress <= 0.85) {
+      return {
+        opacity: 1,
+        transform: 'translate(-50%, -50%)',
+        left: '82%',
+        top: '48%',
+        position: 'fixed' as const,
+      };
+    }
+    const factor = (heroProgress - 0.85) / 0.15;
+    return {
+      opacity: Math.max(0, 1 - factor * 2),
+      transform: 'translate(-50%, -50%)',
+      left: '82%',
+      top: '48%',
+      position: 'fixed' as const,
+    };
+  };
+
+  const getInnovationCardStyles = () => {
+    if (heroProgress < 0.70) {
+      return { opacity: 0, transform: 'translate(-50%, -30%)', left: '50%', top: '65%', position: 'fixed' as const };
+    }
+    if (heroProgress >= 0.70 && heroProgress <= 0.85) {
+      const factor = (heroProgress - 0.70) / 0.15;
+      return {
+        opacity: factor,
+        transform: 'translate(-50%, -50%)',
+        left: '50%',
+        top: '65%',
+        position: 'fixed' as const,
+      };
+    }
+    if (heroProgress > 0.85 && heroProgress <= 0.90) {
+      return { opacity: 1, transform: 'translate(-50%, -50%)', left: '50%', top: '65%', position: 'fixed' as const };
+    }
+    const factor = (heroProgress - 0.90) / 0.10;
+    return {
+      opacity: Math.max(0, 1 - factor * 3),
+      transform: 'translate(-50%, -50%)',
+      left: '50%',
+      top: '65%',
+      position: 'fixed' as const,
+    };
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
+      
+      {/* HEADER: Solidified background layout opacity to neutralize ambient light leaks */}
+      <header className="border-b border-slate-900 bg-slate-950/95 backdrop-blur-md sticky top-0 z-50 px-4 py-3">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-2.5 font-mono text-xs tracking-wider">
+            <Terminal size={14} className="text-cyan-400" />
+            <span className="font-bold text-white uppercase">HAMZA_AHMED_KHAN.sys</span>
           </div>
-          <nav className="flex items-center gap-6 text-xs font-mono text-slate-400">
-            <a href="#expertise" className="hover:text-teal-400 transition-colors">/Expertise</a>
-            <a href="#projects" className="hover:text-teal-400 transition-colors">/Case_Studies</a>
-            <a href="#connect" className="hover:text-teal-400 transition-colors">/Uplink</a>
+          <nav className="flex gap-4 font-mono text-[11px] text-slate-400">
+            <a href="#core-story" className="hover:text-cyan-400 transition-colors">./Timeline</a>
+            <a href="#career-work" className="hover:text-cyan-400 transition-colors">./Experience</a>
+            <a href="#architecture-panel" className="hover:text-cyan-400 transition-colors">./Architecture</a>
           </nav>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-12 relative z-10 space-y-20">
-        
-        {/* HERO CONTAINERS */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-4">
-          <div className="lg:col-span-5 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 border border-slate-800 rounded-full text-[10px] font-mono text-teal-400 uppercase tracking-wider">
-              <Radio size={12} className="animate-pulse" /> Core System Protocol: Active
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-black tracking-tight text-white leading-none">
-              Building Privacy-First <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500">AI & Intelligent Systems</span>
-            </h1>
-            <p className="text-sm text-slate-400 leading-relaxed">
-              AI/ML & Software Engineer specializing in high-performance RAG pipelines, custom NLP models, and secure enterprise integrations with strict compliance footprints.
-            </p>
-            <div className="flex items-center gap-4 pt-2">
-              <a href="#projects" className="px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-600 text-slate-950 text-xs font-mono tracking-wider uppercase font-bold rounded-lg hover:brightness-110 transition-all shadow-lg shadow-teal-500/10">
-                View Case Studies
-              </a>
-              <a href="#connect" className="px-4 py-2 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 text-xs font-mono tracking-wider uppercase rounded-lg transition-all">
-                Execute Handshake
-              </a>
-            </div>
-            
-            <TechStack3D />
-          </div>
-
-          <div className="lg:col-span-7">
-            <CyberneticFace />
-          </div>
-        </section>
-
-        {/* CORE TECHNICAL EXPERTISE PILLARS */}
-        <section id="expertise" className="space-y-6 scroll-mt-20">
-          <div className="border-b border-slate-900 pb-4">
-            <span className="text-[10px] font-mono text-teal-500 uppercase tracking-widest block font-bold">// Capability Parameters</span>
-            <h2 className="text-xl font-bold text-white mt-0.5">Core Technical Pillars</h2>
-          </div>
+      <div ref={heroRef} id="core-story" className="relative h-[450vh] w-full bg-slate-950">
+        <div className="sticky top-0 left-0 h-screen w-full overflow-hidden bg-slate-950">
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 bg-slate-900/20 border border-slate-900 rounded-xl space-y-3 hover:border-slate-800 transition-all">
-              <div className="w-9 h-9 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-400 border border-teal-500/20">
-                <Brain size={18} />
-              </div>
-              <h3 className="text-sm font-bold text-white">AI & NLP Engineering</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Custom BERT models optimized for GDPR-compliant data masking loops, German LeoLM parameter fine-tuning, and robust open-source LLM local infrastructure orchestration.
-              </p>
+          {/* OPTION A: REVEALED NATURAL MEDIA COLORS (Opacity elevated to 0.75, mix-blend-normal)
+          <img 
+            src="/AI-robot.gif" 
+            alt="Cybernetic Asset Vector Node" 
+            className="absolute inset-0 w-full h-full object-cover object-center opacity-[0.75] pointer-events-none mix-blend-normal z-0 transition-transform duration-75"
+            style={{ 
+              transform: `scale(${1 + heroProgress * 0.04})`
+            }}
+          /> */}
+
+          {/* ALTERNATIVE: Un-comment this video block if you choose to use the MP4 version instead of the GIF */}
+          <video
+            src="/AI-robot-2.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover object-center opacity-[0.75] pointer-events-none mix-blend-normal z-0 transition-transform duration-75"
+            style={{ 
+              transform: `scale(${1 + heroProgress * 0.04})`
+            }}
+          /> 
+         
+
+          {/* CLEANED OVERLAYS: Slate gradients completely removed here to fully preserve original colors without shifting blue */}
+
+          {/* HUD Content Display Elements */}
+          <div style={getIdentityStyles()} className="z-40 px-4 font-mono transition-all duration-75 ease-out">
+            <span className="text-[10px] text-cyan-400 tracking-[0.3em] uppercase block mb-1.5">[ SYSTEM PROFILE CORE ]</span>
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white uppercase drop-shadow-[0_0_20px_rgba(6,182,212,0.35)]">
+              Hamza Ahmed Khan
+            </h1>
+            <p className="text-xs md:text-sm text-slate-100 uppercase tracking-[0.25em] mt-2 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              AI / ML & Software Engineer
+            </p>
+            <div className="w-12 h-[2px] bg-cyan-500/60 mx-auto mt-4" />
+          </div>
+
+          <div style={getLeftCardStyles()} className="z-30 w-[85%] md:w-[26%] bg-slate-900/95 border border-slate-800/80 backdrop-blur-md rounded-xl p-5 shadow-2xl font-mono text-center transition-all duration-75 ease-out">
+            <span className="text-[9px] text-cyan-500 tracking-[0.2em] uppercase mb-1 block">[ SYSTEM_TENURE ]</span>
+            <div className="flex items-baseline justify-center">
+              <span className="text-5xl md:text-6xl font-black text-white">5</span>
+              <span className="text-2xl font-black text-cyan-400 animate-pulse ml-0.5">+</span>
+              <span className="text-xs font-bold text-slate-400 ml-1.5 uppercase">Years</span>
+            </div>
+            <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">AI & Development Ops</p>
+          </div>
+
+          <div style={getRightCardStyles()} className="z-30 w-[85%] md:w-[26%] bg-slate-900/95 border border-slate-800/80 backdrop-blur-md rounded-xl p-5 shadow-2xl font-mono text-center transition-all duration-75 ease-out">
+            <span className="text-[9px] text-teal-400 tracking-[0.2em] uppercase mb-2 block">[ CORE_SYSTEM ]</span>
+            <h3 className="text-sm font-extrabold text-white uppercase tracking-wider leading-tight">
+              Python, Next.js,<br />C# .NET & Node.js
+            </h3>
+            <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">
+              Architecting privacy-first intelligence arrays and web nodes.
+            </p>
+          </div>
+
+          <div style={getInnovationCardStyles()} className="z-30 w-[88%] md:w-[32%] bg-slate-900/95 border border-purple-900/40 backdrop-blur-md rounded-xl p-5 shadow-2xl font-mono text-center transition-all duration-75 ease-out">
+            <span className="text-[9px] text-purple-400 tracking-[0.25em] uppercase mb-1 block">[ SECTOR SPECIALIZATION ]</span>
+            <h3 className="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 uppercase">
+              Innovation with AI
+            </h3>
+            <p className="text-[10px] text-slate-300 uppercase tracking-wider mt-0.5">German Legal Tech & RAG</p>
+            <p className="text-[10px] text-slate-400 mt-2 font-sans leading-relaxed">
+              GDPR document anonymization, custom BERT models, and class-based vector indexing.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative z-50 bg-slate-950 border-t border-slate-900/60">
+        
+        <section id="career-work" ref={timelineRef} className="max-w-5xl mx-auto px-4 py-32 relative">
+          <div className="text-center mb-24 font-mono">
+            <div className="text-[10px] text-cyan-400 tracking-[0.2em] uppercase mb-2">[ HISTORICAL LEDGER ]</div>
+            <h2 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tight">My Career and Work</h2>
+            <p className="text-xs text-slate-500 mt-1">Tracing engineering milestones & corporate history.</p>
+          </div>
+
+          <div className="relative w-full">
+            <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-slate-900 -translate-x-1/2 z-0" />
+            
+            <div 
+              style={{ height: `${timelineProgress * 100}%` }}
+              className="absolute left-1/2 top-0 w-[2px] bg-gradient-to-b from-teal-400 to-emerald-400 -translate-x-1/2 z-10 origin-top shadow-[0_0_12px_#14b8a6]"
+            >
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-teal-300 shadow-[0_0_15px_#22d3ee] animate-ping" />
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_#fff]" />
             </div>
 
-            <div className="p-6 bg-slate-900/20 border border-slate-900 rounded-xl space-y-3 hover:border-slate-800 transition-all">
-              <div className="w-9 h-9 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 border border-cyan-500/20">
-                <Database size={18} />
-              </div>
-              <h3 className="text-sm font-bold text-white">Advanced RAG Architectures</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                High-performance transactional vector pipelines (Qdrant, FAISS) designed to process, partition, and retrieve deep contextual trees across 8GB+ corporate file sets.
-              </p>
-            </div>
-
-            <div className="p-6 bg-slate-900/20 border border-slate-900 rounded-xl space-y-3 hover:border-slate-800 transition-all">
-              <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20">
-                <Cpu size={18} />
-              </div>
-              <h3 className="text-sm font-bold text-white">Systems Modernization</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Assembling scalable backends, real-time audio networks (WebRTC/Whisper), and parsing legacy system syntax trees for zero-downtime migrations to .NET Core layers.
-              </p>
+            <div className="space-y-16 relative z-20">
+              {careerTracks.map((event, index) => {
+                const isLeft = index % 2 === 0;
+                return (
+                  <div key={index} className={`flex flex-col md:flex-row w-full ${isLeft ? '' : 'md:flex-row-reverse'}`}>
+                    <div className="w-full md:w-[46%] font-mono">
+                      <div className="bg-slate-900/40 border border-slate-900 rounded-xl p-5 hover:border-cyan-500/30 transition-all duration-300 shadow-xl backdrop-blur-sm">
+                        <span className="text-[9px] text-cyan-400 bg-cyan-950/60 border border-cyan-900/60 px-2 py-0.5 rounded font-bold">
+                          {event.period}
+                        </span>
+                        <h3 className="text-base font-black text-white uppercase mt-3">{event.role}</h3>
+                        <div className="flex justify-between text-[11px] text-slate-400 font-medium mb-2">
+                          <span>{event.company}</span>
+                          <span className="text-slate-500">{event.location}</span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 font-sans leading-relaxed mb-4">{event.summary}</p>
+                        
+                        <div className="border-t border-slate-900/80 pt-3 space-y-1.5">
+                          {event.metrics.map((metric, mi) => (
+                            <div key={mi} className="flex gap-2 items-start text-[10px]">
+                              <ChevronRight size={12} className="text-teal-400 shrink-0 mt-0.5" />
+                              <span className="font-sans text-slate-400">{metric}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="hidden md:block w-[8%]" />
+                    <div className="w-full md:w-[46%]" />
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
 
-        {/* DATA MONITOR RUNTIME LOG SCREEN */}
-        <section className="space-y-4">
-          <h2 className="text-[10px] font-mono text-slate-500 tracking-widest uppercase">// Neural Pipeline Monitor Relay</h2>
+        <section id="architecture-panel" className="max-w-6xl mx-auto px-4 py-20">
+          <TechStack3D />
+        </section>
+
+        <section className="max-w-6xl mx-auto px-4 py-20 space-y-8">
+          <div className="text-center font-mono">
+            <div className="text-[10px] text-purple-400 tracking-[0.2em] uppercase mb-2">[ RESEARCH HUD & HARDWARE TELEMETRY ]</div>
+            <h2 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tight">9 Monitor Control Room</h2>
+          </div>
           <LedTrainingScreen />
         </section>
 
-        {/* COMPREHENSIVE RECRUITER CASE STUDIES MATRIX */}
-        <section id="projects" className="space-y-8 scroll-mt-20">
-          <div className="border-b border-slate-900 pb-4">
-            <span className="text-[10px] font-mono text-cyan-500 uppercase tracking-widest block font-bold">// Architectural Vault</span>
-            <h2 className="text-xl font-bold text-white mt-0.5">Featured Systems Case Studies</h2>
-            <div className="mt-4 p-3 bg-slate-900/40 border border-slate-900 rounded-lg text-xs text-slate-400 flex items-start gap-3">
-              <Shield size={16} className="text-cyan-500 shrink-0 mt-0.5" />
-              <span>
-                <strong>NDA Protection Matrix:</strong> Due to proprietary security agreements within corporate Legal Tech and FinTech nodes, specific underlying business source paths are protected. Systems are showcased via detailed structural data routing flow descriptions.
-              </span>
-            </div>
+        <section className="max-w-4xl mx-auto px-4 py-12 text-center font-mono text-[11px] border-t border-b border-slate-900/60 text-slate-400 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="flex flex-col items-center p-3 bg-slate-900/20 rounded-xl">
+            <MapPin size={16} className="text-cyan-400 mb-1" />
+            <span className="font-bold text-white text-xs mb-0.5">Location Base</span>
+            <span>Berlin, Germany</span>
           </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
-            {/* CASE STUDY 1: JURA-KI */}
-            <div className="p-6 bg-slate-900/10 border border-slate-900 rounded-xl flex flex-col justify-between space-y-6 hover:border-slate-800/80 transition-all group relative">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono bg-teal-500/10 border border-teal-500/20 text-teal-400 px-2 py-0.5 rounded">Legal Tech Core</span>
-                  <span className="text-xs font-mono text-slate-600 group-hover:text-slate-500 transition-colors">Node_01 // Jura-KI</span>
-                </div>
-                <h3 className="text-base font-bold text-white tracking-tight group-hover:text-teal-400 transition-colors">
-                  Privacy-First Legal AI Engine
-                </h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  A high-security local desktop sandbox utilizing isolated localized LLMs and custom tailored BERT models to completely automate GDPR-compliant legal document scrubbing.
-                </p>
-                <div className="space-y-1.5 pt-2">
-                  <div className="text-[11px] text-slate-300 font-medium font-mono">&gt; Engineering Benchmarks:</div>
-                  <p className="text-xs text-slate-400 pl-3 border-l border-slate-800">Built recursive semantic text chunking loops for 8GB+ deep sets and securely deployed to target endpoints via hash-verified modular delivery layouts.</p>
-                </div>
-              </div>
-              <div className="pt-2 flex flex-wrap gap-2 text-[10px] font-mono text-slate-400">
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">BERT</span>
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">Qdrant Node</span>
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">OpenWebUI</span>
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">Turbo.net</span>
-              </div>
-            </div>
-
-            {/* CASE STUDY 2: AVATAR PLATFORM */}
-            <div className="p-6 bg-slate-900/10 border border-slate-900 rounded-xl flex flex-col justify-between space-y-6 hover:border-slate-800/80 transition-all group relative">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded">Multimedia AI</span>
-                  <span className="text-xs font-mono text-slate-600 group-hover:text-slate-500 transition-colors">Node_02 // Live_Agent</span>
-                </div>
-                <h3 className="text-base font-bold text-white tracking-tight group-hover:text-cyan-400 transition-colors">
-                  Low-Latency Interactive Avatar Node
-                </h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Multi-persona conversational AI assistants structured to run natively inside video streaming environments with ultra-low latency text-to-speech audio rendering.
-                </p>
-                <div className="space-y-1.5 pt-2">
-                  <div className="text-[11px] text-slate-300 font-medium font-mono">&gt; Engineering Benchmarks:</div>
-                  <p className="text-xs text-slate-400 pl-3 border-l border-slate-800">Designed a custom bridge architecture connecting asynchronous AI model pipelines into high-throughput live WebRTC video data streaming matrices.</p>
-                </div>
-              </div>
-              <div className="pt-2 flex flex-wrap gap-2 text-[10px] font-mono text-slate-400">
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">Next.js</span>
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">WebRTC</span>
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">Whisper AI</span>
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">Simli Matrix</span>
-              </div>
-            </div>
-
-            {/* CASE STUDY 3: ECG ARRHYTHMIA CLASSIFICATION */}
-            <div className="p-6 bg-slate-900/10 border border-slate-900 rounded-xl flex flex-col justify-between space-y-6 hover:border-slate-800/80 transition-all group relative">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono bg-blue-500/10 border border-blue-500/20 text-blue-400 px-2 py-0.5 rounded">Bioinformatics</span>
-                  <span className="text-xs font-mono text-slate-600 group-hover:text-slate-500 transition-colors">Node_03 // Signal_ML</span>
-                </div>
-                <h3 className="text-base font-bold text-white tracking-tight group-hover:text-blue-400 transition-colors">
-                  AI-Driven ECG Arrhythmia Classifier
-                </h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Deep learning consultation and network optimization engineering for processing high-fidelity continuous physiological clinical data vectors.
-                </p>
-                <div className="space-y-1.5 pt-2">
-                  <div className="text-[11px] text-slate-300 font-medium font-mono">&gt; Engineering Benchmarks:</div>
-                  <p className="text-xs text-slate-400 pl-3 border-l border-slate-800">Implemented an advanced Logistic Regression meta-learner pattern to override high data imbalances, unlocking 92.86% model accuracy and a 0.9644 AUC.</p>
-                </div>
-              </div>
-              <div className="pt-2 flex flex-wrap gap-2 text-[10px] font-mono text-slate-400">
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">ResNet</span>
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">CNN-BIGRU</span>
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">Attention Layers</span>
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">Scikit</span>
-              </div>
-            </div>
-
-            {/* CASE STUDY 4: LEGACY CODE CONVERTER */}
-            <div className="p-6 bg-slate-900/10 border border-slate-900 rounded-xl flex flex-col justify-between space-y-6 hover:border-slate-800/80 transition-all group relative">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono bg-purple-500/10 border border-purple-500/20 text-purple-400 px-2 py-0.5 rounded">Compilers / Systems</span>
-                  <span className="text-xs font-mono text-slate-600 group-hover:text-slate-500 transition-colors">Node_04 // Transpiler</span>
-                </div>
-                <h3 className="text-base font-bold text-white tracking-tight group-hover:text-purple-400 transition-colors">
-                  Automated Legacy Syntax Transpiler Engine
-                </h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  A high-speed industrial compiler transformation tool designed to break down and map legacy VB/VBA scripts securely into clean, modern .NET Core.
-                </p>
-                <div className="space-y-1.5 pt-2">
-                  <div className="text-[11px] text-slate-300 font-medium font-mono">&gt; Engineering Benchmarks:</div>
-                  <p className="text-xs text-slate-400 pl-3 border-l border-slate-800">Engineered a custom rule tree parser using Roslyn Abstract Syntax Trees (AST) to validate structural equivalence and data flow logic types automatically.</p>
-                </div>
-              </div>
-              <div className="pt-2 flex flex-wrap gap-2 text-[10px] font-mono text-slate-400">
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">C#</span>
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">.NET Core</span>
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">Roslyn AST</span>
-                <span className="px-2 py-1 bg-slate-900 rounded border border-slate-800/50">Lexer Parsing</span>
-              </div>
-            </div>
-
+          <div className="flex flex-col items-center p-3 bg-slate-900/20 rounded-xl">
+            <Phone size={16} className="text-teal-400 mb-1" />
+            <span className="font-bold text-white text-xs mb-0.5">Telecom Node</span>
+            <span>+4917661967247</span>
+          </div>
+          <div className="flex flex-col items-center p-3 bg-slate-900/20 rounded-xl">
+            <Terminal size={16} className="text-purple-400 mb-1" />
+            <span className="font-bold text-white text-xs mb-0.5">Languages Spoken</span>
+            <span>English (C1) // German (A2/B1)</span>
           </div>
         </section>
 
-        {/* SECURE CONNECTION FORMS */}
-        <section id="connect" className="max-w-xl mx-auto pt-4 scroll-mt-20">
-          <div className="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-900 rounded-xl p-6 md:p-8 shadow-xl space-y-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-teal-500/5 rounded-full filter blur-xl pointer-events-none" />
-            <div className="flex items-center gap-2 text-[10px] font-mono text-slate-500 uppercase tracking-widest pb-2 border-b border-slate-900">
-              <Terminal size={16} />
-              <span>stewardship_handshake.sh</span>
+        <section className="max-w-xl mx-auto px-4 py-20 font-mono">
+          <div className="bg-slate-900/60 border border-slate-900 rounded-2xl p-6 backdrop-blur-md shadow-2xl">
+            <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase mb-4 tracking-widest">
+              <Terminal size={14} />
+              <span>[ SECURE SYSTEM HANDSHAKE ]</span>
             </div>
-            <h3 className="text-base font-bold text-white">Initialize Endpoint Uplink</h3>
+            <div className="flex justify-center gap-6 mb-6 pb-4 border-b border-slate-900">
+              <a href="mailto:hamykhan786@gmail.com" className="text-slate-400 hover:text-cyan-400 flex items-center gap-1.5 transition-colors text-xs">
+                <Mail size={14} /> hamykhan786@gmail.com
+              </a>
+              <a href="https://linkedin.com/in/hamy-khan-0a9b5275" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 flex items-center gap-1.5 transition-colors text-xs">
+                <Terminal size={14} className="text-blue-400" /> LinkedIn
+              </a>
+              <a href="https://github.com/HamzaAhmedKhan786" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-purple-400 flex items-center gap-1.5 transition-colors text-xs">
+                <Terminal size={14} className="text-purple-400" /> GitHub
+              </a>
+            </div>
             <form onSubmit={handleContactSubmit} className="space-y-4">
               <input 
                 type="email" 
-                placeholder="your.email@enterprise.com" 
+                placeholder="client@enterprise.domain" 
                 required 
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)} 
-                className="w-full px-4 py-3 bg-slate-900/60 border border-slate-800 rounded-lg text-slate-100 focus:outline-none focus:border-teal-500 text-sm font-sans placeholder-slate-600" 
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-900 rounded-xl text-slate-100 focus:outline-none focus:border-cyan-500 text-sm placeholder-slate-700 font-mono" 
               />
               <textarea 
                 rows={4} 
-                placeholder="Specify infrastructure scale parameters or scheduling variables..." 
+                placeholder="Define project parameters, vector pipeline criteria, or handshake parameters..." 
                 required 
                 value={message} 
                 onChange={(e) => setMessage(e.target.value)} 
-                className="w-full px-4 py-3 bg-slate-900/60 border border-slate-800 rounded-lg text-slate-100 focus:outline-none focus:border-teal-500 text-sm font-sans resize-none placeholder-slate-600" 
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-900 rounded-xl text-slate-100 focus:outline-none focus:border-cyan-500 text-sm resize-none placeholder-slate-700 font-mono" 
               />
-              <button 
-                type="submit" 
-                className="w-full py-3 px-4 bg-slate-900 border border-slate-800 hover:border-teal-500/50 text-slate-200 hover:text-white font-medium rounded-lg transition-all text-xs font-mono tracking-wider uppercase flex items-center justify-center gap-2"
-              >
-                {status === 'loading' ? <Loader2 size={14} className="animate-spin text-teal-400" /> : <CheckCircle size={14} />}
-                {status === 'success' ? 'Connection Registered' : status === 'error' ? 'Connection Error' : 'Execute Handshake'}
+              <button type="submit" className="w-full py-3 px-4 bg-slate-950 border border-slate-800 hover:border-cyan-500/50 text-slate-200 hover:text-white font-medium rounded-xl transition-all text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-lg">
+                {status === 'loading' ? <Loader2 size={14} className="animate-spin text-cyan-400" /> : <CheckCircle size={14} />}
+                {status === 'success' ? 'Transmission Complete' : 'Transmit Packet Loop'}
               </button>
             </form>
           </div>
         </section>
-      </main>
 
-      <footer className="border-t border-slate-900 bg-slate-950/40 py-8 text-center text-[10px] font-mono text-slate-600 tracking-wider uppercase">
-        &copy; {new Date().getFullYear()} Hamza Zaidi // Systems Protected. Fully GDPR Compliant — Zero Tracking Enabled.
-      </footer>
+        <footer className="border-t border-slate-900 py-8 text-center text-[10px] font-mono text-slate-600 tracking-wider">
+          HAMZA_AHMED_KHAN © {new Date().getFullYear()} // CHANNELS RUNTIME SECURED
+        </footer>
+      </div>
+
     </div>
   );
 }
