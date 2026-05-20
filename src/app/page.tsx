@@ -381,7 +381,7 @@ export default function Portfolio() {
         <section className="max-w-6xl mx-auto px-4 py-20 space-y-8">
           <div className="text-center font-mono">
             <div className="text-[10px] text-purple-400 tracking-[0.2em] uppercase mb-2">[ RESEARCH HUD & HARDWARE TELEMETRY ]</div>
-            <h2 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tight">9 Monitor Control Room</h2>
+            <h2 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tight">Enterprise Deployment Telemetry</h2>
           </div>
           <LedTrainingScreen />
         </section>
