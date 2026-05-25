@@ -246,7 +246,7 @@ export default function Portfolio() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
       
-      {/* HEADER: Fully responsive text container alignment parameters */}
+      {/* HEADER */}
       <header className="border-b border-slate-900 bg-slate-950/95 backdrop-blur-md sticky top-0 z-50 px-4 py-4">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
           <div className="flex items-center gap-2.5 font-mono text-xs tracking-wider">
@@ -261,7 +261,7 @@ export default function Portfolio() {
         </div>
       </header>
 
-      {/* HERO REGION BLOCK: Handles normal positioning on mobile and complex scrolling arrays on desktop */}
+      {/* HERO REGION BLOCK */}
       <div 
         ref={heroRef} 
         id="core-story" 
@@ -269,18 +269,15 @@ export default function Portfolio() {
       >
         <div className={`${isMobile ? 'relative w-full px-4' : 'sticky top-0 left-0 h-screen w-full overflow-hidden'} bg-slate-950`}>
           
-          {/* Ambient Video Viewport Backdrop */}
-          <video
-            src="/AI-robot-2.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
+          {/* Ambient Image Viewport Backdrop - Safely reverted to an img tag with explicit alt properties */}
+          <img
+            src="/USR2.png"
+            alt="System Backdrop"
             className="absolute inset-0 w-full h-full object-cover object-center opacity-[0.5] md:opacity-[0.75] pointer-events-none mix-blend-normal z-0 transition-transform duration-75"
             style={isMobile ? {} : { transform: `scale(${1 + heroProgress * 0.04})` }}
           /> 
          
-          {/* MOBILE CONTENT LAYOUT (Stacked, scrolling naturally) */}
+          {/* MOBILE CONTENT LAYOUT */}
           {isMobile ? (
             <div className="relative z-40 space-y-8 font-mono text-center pt-6 pb-12">
               <div>
@@ -328,7 +325,7 @@ export default function Portfolio() {
               </div>
             </div>
           ) : (
-            /* DESKTOP DESIGNS - ANIMATING IN SYNC WITH INTERPOLATION FUNCTIONS */
+            /* DESKTOP DESIGNS */
             <>
               <div style={getIdentityStyles()} className="z-40 px-4 font-mono transition-all duration-75 ease-out">
                 <span className="text-[10px] text-cyan-400 tracking-[0.3em] uppercase block mb-1.5">[ SYSTEM PROFILE CORE ]</span>
@@ -378,7 +375,7 @@ export default function Portfolio() {
 
       <div className="relative z-50 bg-slate-950 border-t border-slate-900/60">
         
-        {/* TIMELINE SECTION ELEMENT: Fully responsive alignment parameters built from scratch */}
+        {/* TIMELINE SECTION ELEMENT */}
         <section id="career-work" ref={timelineRef} className="max-w-5xl mx-auto px-4 py-24 relative">
           <div className="text-center mb-16 font-mono">
             <div className="text-[10px] text-cyan-400 tracking-[0.2em] uppercase mb-2">[ HISTORICAL LEDGER ]</div>
@@ -387,7 +384,6 @@ export default function Portfolio() {
           </div>
 
           <div className="relative w-full">
-            {/* Middle tracking line hidden on mobile, rendered cleanly on desktop layouts */}
             <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-slate-900 -translate-x-1/2 z-0" />
             
             <div 
@@ -448,7 +444,7 @@ export default function Portfolio() {
           <LedTrainingScreen />
         </section>
 
-        {/* PERSONAL METADATA HUD BAR: Rearranged grid layout parameters to allow smooth mobile scaling */}
+        {/* PERSONAL METADATA HUD BAR */}
         <section className="max-w-4xl mx-auto px-4 py-12 text-center font-mono text-[11px] border-t border-b border-slate-900/60 text-slate-400 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="flex flex-col items-center p-4 bg-slate-900/20 rounded-xl">
             <MapPin size={16} className="text-cyan-400 mb-1" />
