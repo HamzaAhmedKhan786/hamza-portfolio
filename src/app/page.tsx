@@ -104,8 +104,30 @@ export default function Portfolio() {
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('loading');
-    setTimeout(() => setStatus('success'), 1000);
+    setStatus("loading");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, message }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setStatus("error");
+        return;
+      }
+
+      setStatus("success");
+      setEmail("");
+      setMessage("");
+    } catch {
+      setStatus("error");
+    }
   };
 
   // Dynamic Scroll Matrix Parsers - Applied exclusively on Desktop
@@ -500,10 +522,35 @@ export default function Portfolio() {
                 onChange={(e) => setMessage(e.target.value)} 
                 className="w-full px-4 py-3 bg-slate-950 border border-slate-900 rounded-xl text-slate-100 focus:outline-none focus:border-cyan-500 text-sm resize-none placeholder-slate-700 font-mono" 
               />
-              <button type="submit" className="w-full py-3 px-4 bg-slate-950 border border-slate-800 hover:border-cyan-500/50 text-slate-200 hover:text-white font-medium rounded-xl transition-all text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-lg">
-                {status === 'loading' ? <Loader2 size={14} className="animate-spin text-cyan-400" /> : <CheckCircle size={14} />}
-                {status === 'success' ? 'Transmission Complete' : 'Transmit Packet Loop'}
+              <button
+                type="submit"
+                disabled={status === "loading"}
+                className="w-full py-3 px-4 bg-slate-950 border border-slate-800 hover:border-cyan-500/50 text-slate-200 hover:text-white font-medium rounded-xl transition-all text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {status === "loading" ? (
+                  <Loader2 size={14} className="animate-spin text-cyan-400" />
+                ) : (
+                  <CheckCircle size={14} />
+                )}
+
+                {status === "loading"
+                  ? "Transmitting..."
+                  : status === "success"
+                  ? "Transmission Complete"
+                  : "Transmit Packet Loop"}
               </button>
+
+              {status === "success" && (
+                <p className="text-emerald-400 text-xs text-center">
+                  Message sent successfully.
+                </p>
+              )}
+
+              {status === "error" && (
+                <p className="text-red-400 text-xs text-center">
+                  Message failed. Please try again or email me directly.
+                </p>
+              )}
             </form>
           </div>
         </section>
