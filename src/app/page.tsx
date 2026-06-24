@@ -133,8 +133,8 @@ export default function Portfolio() {
   // Dynamic Scroll Matrix Parsers - Applied exclusively on Desktop
   const getIdentityStyles = () => {
     if (isMobile) return {};
-    if (heroProgress <= 0.20) {
-      const factor = heroProgress / 0.20;
+    if (heroProgress <= 0.12) {
+      const factor = heroProgress / 0.12;
       return {
         position: 'fixed' as const,
         top: `${50 - factor * 32}%`,
@@ -144,7 +144,7 @@ export default function Portfolio() {
         width: '100%',
         opacity: 1,
       };
-    } else if (heroProgress > 0.20 && heroProgress <= 0.85) {
+    } else if (heroProgress > 0.12 && heroProgress <= 0.75) {
       return {
         position: 'fixed' as const,
         top: '18%',
@@ -155,7 +155,7 @@ export default function Portfolio() {
         opacity: 1,
       };
     } else {
-      const factor = (heroProgress - 0.85) / 0.15;
+      const factor = (heroProgress - 0.75) / 0.25;
       return {
         position: 'fixed' as const,
         top: '18%',
@@ -171,11 +171,11 @@ export default function Portfolio() {
 
   const getLeftCardStyles = () => {
     if (isMobile) return {};
-    if (heroProgress < 0.20) {
+    if (heroProgress < 0.08) {
       return { opacity: 0, transform: 'translate(-50%, -50%) scale(0.95)', left: '50%', top: '48%', position: 'fixed' as const };
     }
-    if (heroProgress >= 0.20 && heroProgress <= 0.45) {
-      const factor = (heroProgress - 0.20) / 0.25;
+    if (heroProgress >= 0.08 && heroProgress <= 0.22) {
+      const factor = (heroProgress - 0.08) / 0.14;
       return {
         opacity: 1,
         transform: 'translate(-50%, -50%)',
@@ -184,7 +184,7 @@ export default function Portfolio() {
         position: 'fixed' as const,
       };
     }
-    if (heroProgress > 0.45 && heroProgress <= 0.85) {
+    if (heroProgress > 0.22 && heroProgress <= 0.75) {
       return {
         opacity: 1,
         transform: 'translate(-50%, -50%)',
@@ -193,7 +193,7 @@ export default function Portfolio() {
         position: 'fixed' as const,
       };
     }
-    const factor = (heroProgress - 0.85) / 0.15;
+    const factor = (heroProgress - 0.75) / 0.25;
     return {
       opacity: Math.max(0, 1 - factor * 2),
       transform: 'translate(-50%, -50%)',
@@ -205,11 +205,11 @@ export default function Portfolio() {
 
   const getRightCardStyles = () => {
     if (isMobile) return {};
-    if (heroProgress < 0.45) {
+    if (heroProgress < 0.18) {
       return { opacity: 0, transform: 'translate(-50%, -50%) scale(0.95)', left: '50%', top: '48%', position: 'fixed' as const };
     }
-    if (heroProgress >= 0.45 && heroProgress <= 0.70) {
-      const factor = (heroProgress - 0.45) / 0.25;
+    if (heroProgress >= 0.18 && heroProgress <= 0.34) {
+      const factor = (heroProgress - 0.18) / 0.16;
       return {
         opacity: 1,
         transform: 'translate(-50%, -50%)',
@@ -218,7 +218,7 @@ export default function Portfolio() {
         position: 'fixed' as const,
       };
     }
-    if (heroProgress > 0.70 && heroProgress <= 0.85) {
+    if (heroProgress > 0.34 && heroProgress <= 0.75) {
       return {
         opacity: 1,
         transform: 'translate(-50%, -50%)',
@@ -227,7 +227,7 @@ export default function Portfolio() {
         position: 'fixed' as const,
       };
     }
-    const factor = (heroProgress - 0.85) / 0.15;
+    const factor = (heroProgress - 0.75) / 0.25;
     return {
       opacity: Math.max(0, 1 - factor * 2),
       transform: 'translate(-50%, -50%)',
@@ -239,11 +239,11 @@ export default function Portfolio() {
 
   const getInnovationCardStyles = () => {
     if (isMobile) return {};
-    if (heroProgress < 0.70) {
+    if (heroProgress < 0.32) {
       return { opacity: 0, transform: 'translate(-50%, -30%)', left: '50%', top: '65%', position: 'fixed' as const };
     }
-    if (heroProgress >= 0.70 && heroProgress <= 0.85) {
-      const factor = (heroProgress - 0.70) / 0.15;
+    if (heroProgress >= 0.32 && heroProgress <= 0.48) {
+      const factor = (heroProgress - 0.32) / 0.16;
       return {
         opacity: factor,
         transform: 'translate(-50%, -50%)',
@@ -252,10 +252,10 @@ export default function Portfolio() {
         position: 'fixed' as const,
       };
     }
-    if (heroProgress > 0.85 && heroProgress <= 0.90) {
+    if (heroProgress > 0.48 && heroProgress <= 0.75) {
       return { opacity: 1, transform: 'translate(-50%, -50%)', left: '50%', top: '65%', position: 'fixed' as const };
     }
-    const factor = (heroProgress - 0.90) / 0.10;
+    const factor = (heroProgress - 0.75) / 0.25;
     return {
       opacity: Math.max(0, 1 - factor * 3),
       transform: 'translate(-50%, -50%)',
@@ -287,7 +287,7 @@ export default function Portfolio() {
       <div 
         ref={heroRef} 
         id="core-story" 
-        className={`relative ${isMobile ? 'min-h-screen py-16 flex items-center' : 'h-[450vh]'} w-full bg-slate-950`}
+        className={`relative ${isMobile ? 'min-h-screen py-16 flex items-center' : 'h-[300vh]'} w-full bg-slate-950`}
       >
         <div className={`${isMobile ? 'relative w-full px-4' : 'sticky top-0 left-0 h-screen w-full overflow-hidden'} bg-slate-950`}>
           
