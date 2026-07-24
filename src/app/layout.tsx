@@ -13,8 +13,34 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hamza Portfolio",
-  description: "My personal portfolio website showcasing my projects and skills.",
+  title: "Hamza Ahmed Khan | AI/ML & Software Engineer",
+  description:
+    "Berlin-based AI/ML and software engineer building privacy-first Legal AI, RAG systems, agentic workflows, local LLM applications, and production software.",
+  keywords: [
+    "Hamza Ahmed Khan",
+    "AI Engineer Berlin",
+    "Machine Learning Engineer",
+    "RAG Engineer",
+    "Legal AI",
+    "Local LLM",
+    "Software Engineer",
+  ],
+  authors: [{ name: "Hamza Ahmed Khan" }],
+  creator: "Hamza Ahmed Khan",
+  openGraph: {
+    title: "Hamza Ahmed Khan | AI/ML & Software Engineer",
+    description:
+      "Privacy-first Legal AI, RAG, agentic workflows, local LLMs, and production software.",
+    type: "website",
+    locale: "en_US",
+    siteName: "Hamza Ahmed Khan Portfolio",
+  },
+  twitter: {
+    card: "summary",
+    title: "Hamza Ahmed Khan | AI/ML & Software Engineer",
+    description:
+      "Privacy-first Legal AI, RAG, agentic workflows, local LLMs, and production software.",
+  },
 };
 
 export default function RootLayout({

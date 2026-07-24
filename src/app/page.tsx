@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Terminal, CheckCircle, Loader2, ChevronRight, Mail, Phone, MapPin } from 'lucide-react';
+import { Terminal, CheckCircle, Loader2, ChevronRight, Mail, Phone, MapPin, ExternalLink } from 'lucide-react';
 import LedTrainingScreen from '../components/LedTrainingScreen';
 import TechStack3D from '../components/TechStack3D';
 
@@ -12,6 +12,15 @@ interface CareerEvent {
   location: string;
   summary: string;
   metrics: string[];
+}
+
+interface Project {
+  period: string;
+  title: string;
+  description: string;
+  stack: string[];
+  href?: string;
+  result?: string;
 }
 
 export default function Portfolio() {
@@ -74,6 +83,57 @@ export default function Portfolio() {
         "Formulated modular test configurations inside Agile workflows using JIRA tracking blocks to maintain target operational standards."
       ]
     }
+  ];
+
+  const projects: Project[] = [
+    {
+      period: "Jul 2026 - Present",
+      title: "Legal AI Pattern Drafting Studio",
+      description: "Actively developed full-stack drafting system that learns reusable patterns from approved legal documents, retrieves scoped grounding material, generates and critiques drafts, validates official sources, and routes results to lawyer review.",
+      stack: ["Python", "FastAPI", "React", "PostgreSQL", "RAG", "Agent Security"],
+      href: "https://github.com/HamzaAhmedKhan786/legal-pattern-learning-agent",
+      result: "Active development · approximately 80% production-ready",
+    },
+    {
+      period: "Jun 2026 - Present",
+      title: "AgentForge OS",
+      description: "Continuously developed and tested full-stack platform for governed software-development workflows with specialized architect, frontend, backend, database, security, QA, DevOps, auditor, and judge agents.",
+      stack: ["Next.js", "FastAPI", "PostgreSQL", "Ollama", "Redis", "Kubernetes"],
+      result: "Ongoing development and continuous testing",
+    },
+    {
+      period: "2025 - 2026",
+      title: "ECG Arrhythmia Classification",
+      description: "Volunteer research contribution optimizing a multi-layer ensemble of ResNet, CNN-BiGRU-Attention, and XGBoost for clinical ECG classification.",
+      stack: ["PyTorch", "XGBoost", "Ensemble ML", "PTB-XL"],
+      result: "92.86% accuracy · 0.9644 AUC",
+    },
+    {
+      period: "Open source",
+      title: "Enterprise Cortex RAG Platform",
+      description: "Enterprise knowledge platform for grounded retrieval, document intelligence, and local-first AI workflows.",
+      stack: ["RAG", "Local LLMs", "Vector Search", "Knowledge Management"],
+      href: "https://github.com/HamzaAhmedKhan786/enterprise-cortex-rag-platform",
+    },
+    {
+      period: "Open source",
+      title: "EchoLearn AI",
+      description: "Educational AI assistant built around local models, retrieval-augmented generation, and intelligent learning workflows.",
+      stack: ["Educational AI", "Local AI", "RAG", "Learning Systems"],
+      href: "https://github.com/HamzaAhmedKhan786/echolearn-ai",
+    },
+    {
+      period: "2024 - 2025",
+      title: "Autonomous Formula F1 Perception",
+      description: "Real-time computer-vision pipeline for cone, boundary, and trajectory detection in autonomous racing applications.",
+      stack: ["YOLOv8", "OpenCV", "Object Detection", "Autonomous Systems"],
+    },
+    {
+      period: "2023 - 2024",
+      title: "Automated License Plate Recognition",
+      description: "Localized vehicle license-plate recognition system engineered and deployed for Pakistani registration plates.",
+      stack: ["YOLOv5", "Computer Vision", "ALPR", "Model Deployment"],
+    },
   ];
 
   useEffect(() => {
@@ -278,7 +338,8 @@ export default function Portfolio() {
           <nav className="flex gap-6 font-mono text-[11px] text-slate-400">
             <a href="#core-story" className="hover:text-cyan-400 transition-colors">./Timeline</a>
             <a href="#career-work" className="hover:text-cyan-400 transition-colors">./Experience</a>
-            <a href="#architecture-panel" className="hover:text-cyan-400 transition-colors">./Architecture</a>
+            <a href="#selected-projects" className="hover:text-cyan-400 transition-colors">./Projects</a>
+            <a href="#contact" className="hover:text-cyan-400 transition-colors">./Contact</a>
           </nav>
         </div>
       </header>
@@ -308,7 +369,7 @@ export default function Portfolio() {
                   Hamza Ahmed Khan
                 </h1>
                 <p className="text-xs text-slate-100 uppercase tracking-[0.25em] mt-2 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                  AI / ML & Software Engineer
+                  AI/ML & Software Engineer
                 </p>
                 <div className="w-12 h-[2px] bg-cyan-500/60 mx-auto mt-4" />
               </div>
@@ -330,7 +391,7 @@ export default function Portfolio() {
                     Python, Next.js,<br />C# .NET & Node.js
                   </h3>
                   <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">
-                    Architecting privacy-first intelligence arrays and web nodes.
+                    Building privacy-first AI, agentic workflows, and production software.
                   </p>
                 </div>
 
@@ -341,7 +402,7 @@ export default function Portfolio() {
                   </h3>
                   <p className="text-[10px] text-slate-300 uppercase tracking-wider mt-0.5">German Legal Tech & RAG</p>
                   <p className="text-[10px] text-slate-400 mt-2 font-sans leading-relaxed">
-                    GDPR document anonymization, custom BERT models, and class-based vector indexing.
+                    Local LLMs, grounded retrieval, German NLP, and secure on-device inference.
                   </p>
                 </div>
               </div>
@@ -355,7 +416,7 @@ export default function Portfolio() {
                   Hamza Ahmed Khan
                 </h1>
                 <p className="text-xs md:text-sm text-slate-100 uppercase tracking-[0.25em] mt-2 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                  AI / ML & Software Engineer
+                  AI/ML & Software Engineer
                 </p>
                 <div className="w-12 h-[2px] bg-cyan-500/60 mx-auto mt-4" />
               </div>
@@ -376,7 +437,7 @@ export default function Portfolio() {
                   Python, Next.js,<br />C# .NET & Node.js
                 </h3>
                 <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">
-                  Architecting privacy-first intelligence arrays and web nodes.
+                  Building privacy-first AI, agentic workflows, and production software.
                 </p>
               </div>
 
@@ -387,7 +448,7 @@ export default function Portfolio() {
                 </h3>
                 <p className="text-[10px] text-slate-300 uppercase tracking-wider mt-0.5">German Legal Tech & RAG</p>
                 <p className="text-[10px] text-slate-400 mt-2 font-sans leading-relaxed">
-                  GDPR document anonymization, custom BERT models, and class-based vector indexing.
+                  Local LLMs, grounded retrieval, German NLP, and secure on-device inference.
                 </p>
               </div>
             </>
@@ -452,6 +513,52 @@ export default function Portfolio() {
           </div>
         </section>
 
+        {/* SELECTED PROJECTS */}
+        <section id="selected-projects" className="max-w-6xl mx-auto px-4 py-20">
+          <div className="text-center mb-12 font-mono">
+            <div className="text-[10px] text-cyan-400 tracking-[0.2em] uppercase mb-2">[ SELECTED BUILDS & RESEARCH ]</div>
+            <h2 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tight">Projects with measurable depth</h2>
+            <p className="text-xs text-slate-500 mt-2 max-w-2xl mx-auto leading-relaxed">
+              Applied AI work spanning grounded knowledge systems, clinical ML research, and real-time computer vision.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {projects.map((project) => (
+              <article key={project.title} className="group bg-slate-900/45 border border-slate-800/80 rounded-2xl p-6 hover:border-cyan-500/40 transition-colors">
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <div>
+                    <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-cyan-400">{project.period}</span>
+                    <h3 className="text-lg font-black text-white mt-1">{project.title}</h3>
+                  </div>
+                  {project.href && (
+                    <a
+                      href={project.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`View ${project.title} on GitHub`}
+                      className="shrink-0 text-slate-500 hover:text-cyan-400 transition-colors"
+                    >
+                      <ExternalLink size={18} />
+                    </a>
+                  )}
+                </div>
+                <p className="text-sm text-slate-400 leading-relaxed">{project.description}</p>
+                {project.result && (
+                  <p className="mt-4 font-mono text-xs font-bold text-emerald-400">{project.result}</p>
+                )}
+                <div className="flex flex-wrap gap-2 mt-5">
+                  {project.stack.map((item) => (
+                    <span key={item} className="font-mono text-[9px] uppercase tracking-wider text-slate-400 border border-slate-800 bg-slate-950/70 rounded-full px-2.5 py-1">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
         {/* TECH STACK INTERACTIVE SECTION BLOCK */}
         <section id="architecture-panel" className="max-w-6xl mx-auto px-4 py-16">
           <TechStack3D />
@@ -481,12 +588,12 @@ export default function Portfolio() {
           <div className="flex flex-col items-center p-4 bg-slate-900/20 rounded-xl">
             <Terminal size={16} className="text-purple-400 mb-1" />
             <span className="font-bold text-white text-xs mb-0.5">Languages Spoken</span>
-            <span>English (C1) // German (A2/B1)</span>
+            <span>English (C1) // German (A1/A2, pursuing B1)</span>
           </div>
         </section>
 
         {/* SECURE PACKET HANDSHAKE RECEPTACLE CONTACT PANEL */}
-        <section className="max-w-xl mx-auto px-4 py-20 font-mono">
+        <section id="contact" className="max-w-xl mx-auto px-4 py-20 font-mono">
           <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-2xl">
             <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase mb-4 tracking-widest">
               <Terminal size={14} />
@@ -497,7 +604,7 @@ export default function Portfolio() {
                 <Mail size={14} /> hamykhan786@gmail.com
               </a>
               <div className="flex gap-6">
-                <a href="https://linkedin.com/in/hamy-khan-0a9b5275" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 flex items-center gap-1.5 transition-colors text-xs">
+                <a href="https://www.linkedin.com/in/hamza-ahmed-khan-0a9b5275/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 flex items-center gap-1.5 transition-colors text-xs">
                   <Terminal size={14} className="text-blue-400" /> LinkedIn
                 </a>
                 <a href="https://github.com/HamzaAhmedKhan786" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-purple-400 flex items-center gap-1.5 transition-colors text-xs">
@@ -556,7 +663,7 @@ export default function Portfolio() {
         </section>
 
         <footer className="border-t border-slate-900 py-8 text-center text-[10px] font-mono text-slate-600 tracking-wider">
-          HAMZA_AHMED_KHAN © {new Date().getFullYear()} // CHANNELS RUNTIME SECURED
+          HAMZA_AHMED_KHAN © {new Date().getFullYear()} · CHANNELS RUNTIME SECURED
         </footer>
       </div>
 
