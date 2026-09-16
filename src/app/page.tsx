@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { Terminal, CheckCircle, Loader2, ChevronRight, Mail, Phone, MapPin, ExternalLink } from 'lucide-react';
 import LedTrainingScreen from '../components/LedTrainingScreen';
 import TechStack3D from '../components/TechStack3D';
@@ -21,29 +22,33 @@ interface Project {
   stack: string[];
   href?: string;
   result?: string;
+  screenshot?: {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+  };
 }
+
+const backgroundPanels = [
+  "/panel-ai-core.webp",
+  "/panel-model-training.webp",
+  "/panel-rag-agents.webp",
+  "/panel-computer-vision.webp",
+  "/panel-system-architecture.webp",
+];
 
 export default function Portfolio() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   
-  const heroRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
-  const [heroProgress, setHeroProgress] = useState(0);
+  const projectsRef = useRef<HTMLElement>(null);
+  const telemetryRef = useRef<HTMLElement>(null);
+  const architectureRef = useRef<HTMLElement>(null);
+  const [backgroundStage, setBackgroundStage] = useState(0);
   const [timelineProgress, setTimelineProgress] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Responsive device verification listener
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // 768px corresponds to Tailwind's md breakpoint
-    };
-    
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Initial initialization check
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const careerTracks: CareerEvent[] = [
     {
@@ -56,6 +61,8 @@ export default function Portfolio() {
         "Integrated Whisper AI, WebRTC, and Simli for low-latency lip-synced multi-persona avatar responses (AI Tilda, Peter, Mary).",
         "Built Jura-KI desktop application featuring local LLMs and a custom BERT-based NER engine for GDPR-compliant anonymization.",
         "Developed highly scalable RAG pipelines using OpenWebUI, FAISS, and Qdrant with class-based indexing for 8GB+ legal datasets.",
+        "Fine-tuned LeoLM and Llama 3.2 with PEFT, LoRA, and quantization; built structured legal information extraction and document classification workflows.",
+        "Developed Outlook add-ins with MAUI and Blazor, and packaged on-device AI for secure offline inference.",
         "Automated legacy migrations by engineering a C# code converter to transition VB/VBA architectures to modern .NET networks."
       ]
     },
@@ -93,6 +100,12 @@ export default function Portfolio() {
       stack: ["Python", "FastAPI", "React", "PostgreSQL", "RAG", "Agent Security"],
       href: "https://github.com/HamzaAhmedKhan786/legal-pattern-learning-agent",
       result: "Active development · approximately 80% production-ready",
+      screenshot: {
+        src: "/projects/legal-ai-workspace.png",
+        alt: "Legal AI Pattern Drafting Studio workspace with source learning and structured case facts",
+        width: 1265,
+        height: 1957,
+      },
     },
     {
       period: "Jun 2026 - Present",
@@ -100,6 +113,12 @@ export default function Portfolio() {
       description: "Continuously developed and tested full-stack platform for governed software-development workflows with specialized architect, frontend, backend, database, security, QA, DevOps, auditor, and judge agents.",
       stack: ["Next.js", "FastAPI", "PostgreSQL", "Ollama", "Redis", "Kubernetes"],
       result: "Ongoing development and continuous testing",
+      screenshot: {
+        src: "/projects/agentforge-dashboard.png",
+        alt: "AgentForge OS dashboard showing its project creation and agent selection workflow",
+        width: 1913,
+        height: 942,
+      },
     },
     {
       period: "2025 - 2026",
@@ -123,6 +142,13 @@ export default function Portfolio() {
       href: "https://github.com/HamzaAhmedKhan786/echolearn-ai",
     },
     {
+      period: "2019 · Euronet Worldwide · Financial Technology / Fraud Prevention",
+      title: "FACE – Fraud Detection & Card Protection",
+      description: "Card transactions needed rapid detection of suspicious activity while limiting risk to customers and banks. Worked on FACE, a deterministic rule-based fraud detection and card protection system that checked transactions against predefined rules and previous cardholder activity. Suspicious behavior could trigger an alert, automatic card blocking when required, and escalation to the bank. An authorized bank representative reviewed the case with the customer before a blocked card could be restored.",
+      stack: ["C#", "ASP.NET MVC", "MS SQL", "Stored Procedures", "Database Triggers", "Rule-Based Fraud Detection", "Transaction Monitoring", "Card Security", "ATM/POS Systems"],
+      result: "Automated fraud response with human verification before unblocking; not an LLM or generative-AI system.",
+    },
+    {
       period: "2024 - 2025",
       title: "Autonomous Formula F1 Perception",
       description: "Real-time computer-vision pipeline for cone, boundary, and trajectory detection in autonomous racing applications.",
@@ -138,14 +164,22 @@ export default function Portfolio() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (heroRef.current) {
-        const rect = heroRef.current.getBoundingClientRect();
-        const totalHeight = rect.height - window.innerHeight;
-        if (totalHeight > 0) {
-          const progress = Math.min(Math.max(-rect.top / totalHeight, 0), 1);
-          setHeroProgress(progress);
-        }
-      }
+      const careerTop = timelineRef.current?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY;
+      const projectsTop = projectsRef.current?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY;
+      const telemetryTop = telemetryRef.current?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY;
+      const architectureTop = architectureRef.current?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY;
+      const trigger = window.innerHeight * 0.55;
+      setBackgroundStage(
+        architectureTop <= trigger
+          ? 4
+          : telemetryTop <= trigger
+            ? 3
+            : projectsTop <= trigger
+              ? 2
+              : careerTop <= trigger
+                ? 1
+                : 0
+      );
 
       if (timelineRef.current) {
         const rect = timelineRef.current.getBoundingClientRect();
@@ -190,280 +224,76 @@ export default function Portfolio() {
     }
   };
 
-  // Dynamic Scroll Matrix Parsers - Applied exclusively on Desktop
-  const getIdentityStyles = () => {
-    if (isMobile) return {};
-    if (heroProgress <= 0.12) {
-      const factor = heroProgress / 0.12;
-      return {
-        position: 'fixed' as const,
-        top: `${50 - factor * 32}%`,
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        textAlign: 'center' as const,
-        width: '100%',
-        opacity: 1,
-      };
-    } else if (heroProgress > 0.12 && heroProgress <= 0.75) {
-      return {
-        position: 'fixed' as const,
-        top: '18%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        textAlign: 'center' as const,
-        width: '100%',
-        opacity: 1,
-      };
-    } else {
-      const factor = (heroProgress - 0.75) / 0.25;
-      return {
-        position: 'fixed' as const,
-        top: '18%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        textAlign: 'center' as const,
-        width: '100%',
-        opacity: Math.max(0, 1 - factor * 2),
-        pointerEvents: 'none' as const,
-      };
-    }
-  };
-
-  const getLeftCardStyles = () => {
-    if (isMobile) return {};
-    if (heroProgress < 0.08) {
-      return { opacity: 0, transform: 'translate(-50%, -50%) scale(0.95)', left: '50%', top: '48%', position: 'fixed' as const };
-    }
-    if (heroProgress >= 0.08 && heroProgress <= 0.22) {
-      const factor = (heroProgress - 0.08) / 0.14;
-      return {
-        opacity: 1,
-        transform: 'translate(-50%, -50%)',
-        left: `${50 - factor * 32}%`,
-        top: '48%',
-        position: 'fixed' as const,
-      };
-    }
-    if (heroProgress > 0.22 && heroProgress <= 0.75) {
-      return {
-        opacity: 1,
-        transform: 'translate(-50%, -50%)',
-        left: '18%',
-        top: '48%',
-        position: 'fixed' as const,
-      };
-    }
-    const factor = (heroProgress - 0.75) / 0.25;
-    return {
-      opacity: Math.max(0, 1 - factor * 2),
-      transform: 'translate(-50%, -50%)',
-      left: '18%',
-      top: '48%',
-      position: 'fixed' as const,
-    };
-  };
-
-  const getRightCardStyles = () => {
-    if (isMobile) return {};
-    if (heroProgress < 0.18) {
-      return { opacity: 0, transform: 'translate(-50%, -50%) scale(0.95)', left: '50%', top: '48%', position: 'fixed' as const };
-    }
-    if (heroProgress >= 0.18 && heroProgress <= 0.34) {
-      const factor = (heroProgress - 0.18) / 0.16;
-      return {
-        opacity: 1,
-        transform: 'translate(-50%, -50%)',
-        left: `${50 + factor * 32}%`,
-        top: '48%',
-        position: 'fixed' as const,
-      };
-    }
-    if (heroProgress > 0.34 && heroProgress <= 0.75) {
-      return {
-        opacity: 1,
-        transform: 'translate(-50%, -50%)',
-        left: '82%',
-        top: '48%',
-        position: 'fixed' as const,
-      };
-    }
-    const factor = (heroProgress - 0.75) / 0.25;
-    return {
-      opacity: Math.max(0, 1 - factor * 2),
-      transform: 'translate(-50%, -50%)',
-      left: '82%',
-      top: '48%',
-      position: 'fixed' as const,
-    };
-  };
-
-  const getInnovationCardStyles = () => {
-    if (isMobile) return {};
-    if (heroProgress < 0.32) {
-      return { opacity: 0, transform: 'translate(-50%, -30%)', left: '50%', top: '65%', position: 'fixed' as const };
-    }
-    if (heroProgress >= 0.32 && heroProgress <= 0.48) {
-      const factor = (heroProgress - 0.32) / 0.16;
-      return {
-        opacity: factor,
-        transform: 'translate(-50%, -50%)',
-        left: '50%',
-        top: '65%',
-        position: 'fixed' as const,
-      };
-    }
-    if (heroProgress > 0.48 && heroProgress <= 0.75) {
-      return { opacity: 1, transform: 'translate(-50%, -50%)', left: '50%', top: '65%', position: 'fixed' as const };
-    }
-    const factor = (heroProgress - 0.75) / 0.25;
-    return {
-      opacity: Math.max(0, 1 - factor * 3),
-      transform: 'translate(-50%, -50%)',
-      left: '50%',
-      top: '65%',
-      position: 'fixed' as const,
-    };
-  };
-
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
-      
+    <div className="min-h-screen overflow-x-hidden bg-slate-950 text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
+
+      <div className="fixed inset-0 z-0 overflow-hidden bg-slate-950" aria-hidden="true">
+        {backgroundPanels.map((panel, index) => (
+          <div
+            key={panel}
+            className="portfolio-background-panel absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out"
+            style={{
+              backgroundImage: `url(${panel})`,
+              opacity: backgroundStage === index ? 1 : 0,
+            }}
+          />
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/45 via-slate-950/25 to-slate-950/90" />
+      </div>
+
       {/* HEADER */}
-      <header className="border-b border-slate-900 bg-slate-950/95 backdrop-blur-md sticky top-0 z-50 px-4 py-4">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/90 px-4 py-3 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 font-mono text-xs tracking-wider">
             <Terminal size={14} className="text-cyan-400" />
-            <span className="font-bold text-white uppercase">HAMZA_AHMED_KHAN.sys</span>
+            <span className="font-bold uppercase text-white">Hamza Ahmed Khan</span>
           </div>
-          <nav className="flex gap-6 font-mono text-[11px] text-slate-400">
-            <a href="#core-story" className="hover:text-cyan-400 transition-colors">./Timeline</a>
-            <a href="#career-work" className="hover:text-cyan-400 transition-colors">./Experience</a>
-            <a href="#selected-projects" className="hover:text-cyan-400 transition-colors">./Projects</a>
-            <a href="#contact" className="hover:text-cyan-400 transition-colors">./Contact</a>
+          <nav aria-label="Main navigation" className="flex w-full flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-xs text-slate-300 sm:w-auto">
+            <a href="#career-work" className="transition-colors hover:text-cyan-300">Experience</a>
+            <a href="#selected-projects" className="transition-colors hover:text-cyan-300">Projects</a>
+            <a href="#architecture-panel" className="transition-colors hover:text-cyan-300">Skills</a>
+            <a href="#contact" className="transition-colors hover:text-cyan-300">Contact</a>
           </nav>
         </div>
       </header>
 
-      {/* HERO REGION BLOCK */}
-      <div 
-        ref={heroRef} 
-        id="core-story" 
-        className={`relative ${isMobile ? 'min-h-screen py-16 flex items-center' : 'h-[300vh]'} w-full bg-slate-950`}
-      >
-        <div className={`${isMobile ? 'relative w-full px-4' : 'sticky top-0 left-0 h-screen w-full overflow-hidden'} bg-slate-950`}>
-          
-          {/* Ambient Image Viewport Backdrop - Safely reverted to an img tag with explicit alt properties */}
-          <img
-            src="/USR2.png"
-            alt="System Backdrop"
-            className="absolute inset-0 w-full h-full object-cover object-center opacity-[0.5] md:opacity-[0.75] pointer-events-none mix-blend-normal z-0 transition-transform duration-75"
-            style={isMobile ? {} : { transform: `scale(${1 + heroProgress * 0.04})` }}
-          /> 
-         
-          {/* MOBILE CONTENT LAYOUT */}
-          {isMobile ? (
-            <div className="relative z-40 space-y-8 font-mono text-center pt-6 pb-12">
-              <div>
-                <span className="text-[10px] text-cyan-400 tracking-[0.3em] uppercase block mb-1.5">[ SYSTEM PROFILE CORE ]</span>
-                <h1 className="text-3xl font-black tracking-tight text-white uppercase drop-shadow-[0_0_20px_rgba(6,182,212,0.35)]">
-                  Hamza Ahmed Khan
-                </h1>
-                <p className="text-xs text-slate-100 uppercase tracking-[0.25em] mt-2 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                  AI/ML & Software Engineer
-                </p>
-                <div className="w-12 h-[2px] bg-cyan-500/60 mx-auto mt-4" />
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 max-w-sm mx-auto">
-                <div className="bg-slate-900/90 border border-slate-800/80 p-5 rounded-xl shadow-2xl text-center">
-                  <span className="text-[9px] text-cyan-500 tracking-[0.2em] uppercase mb-1 block">[ SYSTEM_TENURE ]</span>
-                  <div className="flex items-baseline justify-center">
-                    <span className="text-5xl font-black text-white">5</span>
-                    <span className="text-2xl font-black text-cyan-400 animate-pulse ml-0.5">+</span>
-                    <span className="text-xs font-bold text-slate-400 ml-1.5 uppercase">Years</span>
-                  </div>
-                  <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">AI & Development Ops</p>
-                </div>
-
-                <div className="bg-slate-900/90 border border-slate-800/80 p-5 rounded-xl shadow-2xl text-center">
-                  <span className="text-[9px] text-teal-400 tracking-[0.2em] uppercase mb-2 block">[ CORE_SYSTEM ]</span>
-                  <h3 className="text-xs font-extrabold text-white uppercase tracking-wider leading-tight">
-                    Python, Next.js,<br />C# .NET & Node.js
-                  </h3>
-                  <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">
-                    Building privacy-first AI, agentic workflows, and production software.
-                  </p>
-                </div>
-
-                <div className="bg-slate-900/90 border border-purple-900/40 p-5 rounded-xl shadow-2xl text-center">
-                  <span className="text-[9px] text-purple-400 tracking-[0.25em] uppercase mb-1 block">[ SECTOR SPECIALIZATION ]</span>
-                  <h3 className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 uppercase">
-                    Innovation with AI
-                  </h3>
-                  <p className="text-[10px] text-slate-300 uppercase tracking-wider mt-0.5">German Legal Tech & RAG</p>
-                  <p className="text-[10px] text-slate-400 mt-2 font-sans leading-relaxed">
-                    Local LLMs, grounded retrieval, German NLP, and secure on-device inference.
-                  </p>
-                </div>
-              </div>
+      <main>
+      <section id="core-story" className="relative z-20 flex min-h-[calc(100svh-7rem)] items-center justify-center px-4 py-16 sm:min-h-[calc(100svh-4rem)]">
+        <div className="w-full max-w-4xl rounded-3xl border border-cyan-300/20 bg-slate-950/75 p-7 text-center shadow-[0_30px_100px_rgba(0,0,0,0.5)] backdrop-blur-xl md:p-12">
+          <span className="mb-3 block font-mono text-[11px] uppercase tracking-[0.2em] text-cyan-300">Berlin-based AI & software engineer</span>
+          <h1 className="text-4xl font-black tracking-tight text-white md:text-6xl">Hamza Ahmed Khan</h1>
+          <p className="mt-4 text-base font-semibold text-cyan-100 md:text-xl">Building trustworthy AI systems from prototype to production.</p>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-300 md:text-base">I work across legal AI, retrieval-augmented generation, agentic workflows, and full-stack engineering—with a focus on privacy, reliability, and useful outcomes.</p>
+          <div className="mt-7 flex flex-wrap justify-center gap-3">
+            <a href="#selected-projects" className="rounded-lg bg-cyan-300 px-5 py-3 text-sm font-bold text-slate-950 transition-colors hover:bg-cyan-200">Explore projects</a>
+            <a href="#contact" className="rounded-lg border border-white/25 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:border-cyan-300/60 hover:bg-white/10">Get in touch</a>
+          </div>
+          <div className="mx-auto mt-8 grid max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.055] p-4 backdrop-blur-xl">
+              <strong className="block text-2xl text-cyan-300">5+</strong>
+              <span className="font-mono text-xs uppercase tracking-wider text-slate-300">Years engineering</span>
             </div>
-          ) : (
-            /* DESKTOP DESIGNS */
-            <>
-              <div style={getIdentityStyles()} className="z-40 px-4 font-mono transition-all duration-75 ease-out">
-                <span className="text-[10px] text-cyan-400 tracking-[0.3em] uppercase block mb-1.5">[ SYSTEM PROFILE CORE ]</span>
-                <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white uppercase drop-shadow-[0_0_20px_rgba(6,182,212,0.35)]">
-                  Hamza Ahmed Khan
-                </h1>
-                <p className="text-xs md:text-sm text-slate-100 uppercase tracking-[0.25em] mt-2 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                  AI/ML & Software Engineer
-                </p>
-                <div className="w-12 h-[2px] bg-cyan-500/60 mx-auto mt-4" />
-              </div>
-
-              <div style={getLeftCardStyles()} className="z-30 w-[26%] bg-slate-900/95 border border-slate-800/80 backdrop-blur-md rounded-xl p-5 shadow-2xl font-mono text-center transition-all duration-75 ease-out">
-                <span className="text-[9px] text-cyan-500 tracking-[0.2em] uppercase mb-1 block">[ SYSTEM_TENURE ]</span>
-                <div className="flex items-baseline justify-center">
-                  <span className="text-6xl font-black text-white">5</span>
-                  <span className="text-2xl font-black text-cyan-400 animate-pulse ml-0.5">+</span>
-                  <span className="text-xs font-bold text-slate-400 ml-1.5 uppercase">Years</span>
-                </div>
-                <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">AI & Development Ops</p>
-              </div>
-
-              <div style={getRightCardStyles()} className="z-30 w-[26%] bg-slate-900/95 border border-slate-800/80 backdrop-blur-md rounded-xl p-5 shadow-2xl font-mono text-center transition-all duration-75 ease-out">
-                <span className="text-[9px] text-teal-400 tracking-[0.2em] uppercase mb-2 block">[ CORE_SYSTEM ]</span>
-                <h3 className="text-sm font-extrabold text-white uppercase tracking-wider leading-tight">
-                  Python, Next.js,<br />C# .NET & Node.js
-                </h3>
-                <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">
-                  Building privacy-first AI, agentic workflows, and production software.
-                </p>
-              </div>
-
-              <div style={getInnovationCardStyles()} className="z-30 w-[32%] bg-slate-900/95 border border-purple-900/40 backdrop-blur-md rounded-xl p-5 shadow-2xl font-mono text-center transition-all duration-75 ease-out">
-                <span className="text-[9px] text-purple-400 tracking-[0.25em] uppercase mb-1 block">[ SECTOR SPECIALIZATION ]</span>
-                <h3 className="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 uppercase">
-                  Innovation with AI
-                </h3>
-                <p className="text-[10px] text-slate-300 uppercase tracking-wider mt-0.5">German Legal Tech & RAG</p>
-                <p className="text-[10px] text-slate-400 mt-2 font-sans leading-relaxed">
-                  Local LLMs, grounded retrieval, German NLP, and secure on-device inference.
-                </p>
-              </div>
-            </>
-          )}
+            <div className="rounded-2xl border border-white/10 bg-white/[0.055] p-4 backdrop-blur-xl">
+              <strong className="block text-sm text-white">Python · Next.js · .NET</strong>
+              <span className="mt-2 block font-mono text-xs uppercase tracking-wider text-slate-300">Production systems</span>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.055] p-4 backdrop-blur-xl">
+              <strong className="block text-sm text-purple-300">Legal AI · RAG</strong>
+              <span className="mt-2 block font-mono text-xs uppercase tracking-wider text-slate-300">Privacy-first AI</span>
+            </div>
+          </div>
+          <p className="mt-8 font-mono text-xs uppercase tracking-[0.16em] text-slate-400">Scroll to see the work</p>
         </div>
-      </div>
+      </section>
 
-      <div className="relative z-50 bg-slate-950 border-t border-slate-900/60">
+      <div className="relative z-20 border-t border-white/5 bg-slate-950/15">
         
         {/* TIMELINE SECTION ELEMENT */}
         <section id="career-work" ref={timelineRef} className="max-w-5xl mx-auto px-4 py-24 relative">
-          <div className="text-center mb-16 font-mono">
+          <div className="mx-auto mb-16 max-w-2xl rounded-2xl border border-white/10 bg-slate-950/40 p-6 text-center font-mono shadow-2xl backdrop-blur-xl">
             <div className="text-[10px] text-cyan-400 tracking-[0.2em] uppercase mb-2">[ HISTORICAL LEDGER ]</div>
             <h2 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tight">My Career and Work</h2>
-            <p className="text-xs text-slate-500 mt-1">Tracing engineering milestones & corporate history.</p>
+            <p className="mt-2 text-sm text-slate-300">Engineering experience across legal technology, fintech, and industrial systems.</p>
           </div>
 
           <div className="relative w-full">
@@ -483,22 +313,22 @@ export default function Portfolio() {
                 return (
                   <div key={index} className={`flex flex-col md:flex-row w-full ${isLeft ? '' : 'md:flex-row-reverse'}`}>
                     <div className="w-full md:w-[46%] font-mono">
-                      <div className="bg-slate-900/40 border border-slate-900 rounded-xl p-5 hover:border-cyan-500/30 transition-all duration-300 shadow-xl backdrop-blur-sm">
-                        <span className="text-[9px] text-cyan-400 bg-cyan-950/60 border border-cyan-900/60 px-2 py-0.5 rounded font-bold">
+                      <div className="rounded-xl border border-white/10 bg-slate-950/80 p-5 shadow-xl backdrop-blur-xl transition-all duration-300 hover:border-cyan-400/40">
+                        <span className="rounded border border-cyan-900/60 bg-cyan-950/60 px-2 py-0.5 text-xs font-bold text-cyan-300">
                           {event.period}
                         </span>
                         <h3 className="text-base font-black text-white uppercase mt-3">{event.role}</h3>
-                        <div className="flex flex-col sm:flex-row sm:justify-between text-[11px] text-slate-400 font-medium mb-2 gap-1 sm:gap-0">
+                        <div className="mb-2 flex flex-col gap-1 text-xs font-medium text-slate-300 sm:flex-row sm:justify-between sm:gap-0">
                           <span>{event.company}</span>
                           <span className="text-slate-500">{event.location}</span>
                         </div>
-                        <p className="text-[11px] text-slate-500 font-sans leading-relaxed mb-4">{event.summary}</p>
+                        <p className="mb-4 font-sans text-sm leading-relaxed text-slate-300">{event.summary}</p>
                         
                         <div className="border-t border-slate-900/80 pt-3 space-y-2">
                           {event.metrics.map((metric, mi) => (
-                            <div key={mi} className="flex gap-2 items-start text-[10px]">
+                            <div key={mi} className="flex items-start gap-2 text-xs leading-relaxed">
                               <ChevronRight size={12} className="text-teal-400 shrink-0 mt-0.5" />
-                              <span className="font-sans text-slate-400">{metric}</span>
+                              <span className="font-sans text-slate-300">{metric}</span>
                             </div>
                           ))}
                         </div>
@@ -514,21 +344,42 @@ export default function Portfolio() {
         </section>
 
         {/* SELECTED PROJECTS */}
-        <section id="selected-projects" className="max-w-6xl mx-auto px-4 py-20">
-          <div className="text-center mb-12 font-mono">
+        <section id="selected-projects" ref={projectsRef} className="max-w-6xl mx-auto px-4 py-20">
+          <div className="mx-auto mb-12 max-w-2xl rounded-2xl border border-white/10 bg-slate-950/40 p-6 text-center font-mono shadow-2xl backdrop-blur-xl">
             <div className="text-[10px] text-cyan-400 tracking-[0.2em] uppercase mb-2">[ SELECTED BUILDS & RESEARCH ]</div>
             <h2 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tight">Projects with measurable depth</h2>
-            <p className="text-xs text-slate-500 mt-2 max-w-2xl mx-auto leading-relaxed">
+            <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-slate-300">
               Applied AI work spanning grounded knowledge systems, clinical ML research, and real-time computer vision.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {projects.map((project) => (
-              <article key={project.title} className="group bg-slate-900/45 border border-slate-800/80 rounded-2xl p-6 hover:border-cyan-500/40 transition-colors">
+              <article key={project.title} className="group rounded-2xl border border-white/10 bg-slate-950/80 p-6 shadow-2xl backdrop-blur-xl transition-all hover:border-cyan-400/40">
+                {project.screenshot && (
+                  <a
+                    href={project.screenshot.src}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Open full ${project.title} screenshot`}
+                    className="relative -mx-6 -mt-6 mb-5 block overflow-hidden rounded-t-2xl border-b border-white/10 bg-slate-900 focus-visible:outline-offset-[-4px]"
+                  >
+                    <Image
+                      src={project.screenshot.src}
+                      alt={project.screenshot.alt}
+                      width={project.screenshot.width}
+                      height={project.screenshot.height}
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="h-48 w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02] sm:h-56"
+                    />
+                    <span className="absolute bottom-3 right-3 rounded-md border border-white/20 bg-slate-950/90 px-2.5 py-1 text-xs font-medium text-white shadow-lg">
+                      View full screenshot ↗
+                    </span>
+                  </a>
+                )}
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
-                    <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-cyan-400">{project.period}</span>
+                    <span className="font-mono text-xs uppercase tracking-wider text-cyan-300">{project.period}</span>
                     <h3 className="text-lg font-black text-white mt-1">{project.title}</h3>
                   </div>
                   {project.href && (
@@ -543,13 +394,13 @@ export default function Portfolio() {
                     </a>
                   )}
                 </div>
-                <p className="text-sm text-slate-400 leading-relaxed">{project.description}</p>
+                <p className="text-sm leading-relaxed text-slate-300">{project.description}</p>
                 {project.result && (
                   <p className="mt-4 font-mono text-xs font-bold text-emerald-400">{project.result}</p>
                 )}
                 <div className="flex flex-wrap gap-2 mt-5">
                   {project.stack.map((item) => (
-                    <span key={item} className="font-mono text-[9px] uppercase tracking-wider text-slate-400 border border-slate-800 bg-slate-950/70 rounded-full px-2.5 py-1">
+                    <span key={item} className="rounded-full border border-slate-700 bg-slate-950/70 px-2.5 py-1 font-mono text-xs text-slate-300">
                       {item}
                     </span>
                   ))}
@@ -559,21 +410,27 @@ export default function Portfolio() {
           </div>
         </section>
 
-        {/* TECH STACK INTERACTIVE SECTION BLOCK */}
-        <section id="architecture-panel" className="max-w-6xl mx-auto px-4 py-16">
-          <TechStack3D />
-        </section>
-
         {/* TELEMETRY SECTION BLOCK */}
-        <section className="max-w-6xl mx-auto px-4 py-16 space-y-8">
-          <div className="text-center font-mono">
+        <section ref={telemetryRef} className="max-w-6xl mx-auto px-4 py-16 space-y-8">
+          <div className="mx-auto max-w-2xl rounded-2xl border border-white/10 bg-slate-950/40 p-6 text-center font-mono shadow-2xl backdrop-blur-xl">
             <div className="text-[10px] text-purple-400 tracking-[0.2em] uppercase mb-2">[ RESEARCH HUD & HARDWARE TELEMETRY ]</div>
-            <h2 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tight">Enterprise Deployment Telemetry</h2>
+            <h2 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tight">Computer Vision & Model Telemetry</h2>
           </div>
           <LedTrainingScreen />
         </section>
 
+        {/* TECH STACK INTERACTIVE SECTION BLOCK */}
+        <section id="architecture-panel" ref={architectureRef} className="max-w-6xl mx-auto px-4 py-16">
+          <TechStack3D />
+        </section>
+
         {/* PERSONAL METADATA HUD BAR */}
+        <section className="mx-auto max-w-4xl px-4 py-10 text-center">
+          <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-6 backdrop-blur-xl">
+            <h2 className="text-xl font-bold text-white">Education</h2>
+            <p className="mt-2 text-sm text-slate-300">Bachelor of Science in Computer Science · Hamdard University, Karachi · 2017</p>
+          </div>
+        </section>
         <section className="max-w-4xl mx-auto px-4 py-12 text-center font-mono text-[11px] border-t border-b border-slate-900/60 text-slate-400 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="flex flex-col items-center p-4 bg-slate-900/20 rounded-xl">
             <MapPin size={16} className="text-cyan-400 mb-1" />
@@ -613,7 +470,9 @@ export default function Portfolio() {
               </div>
             </div>
             <form onSubmit={handleContactSubmit} className="space-y-4">
-              <input 
+              <label htmlFor="contact-email" className="block text-xs font-medium text-slate-200">Your email</label>
+              <input
+                id="contact-email"
                 type="email" 
                 placeholder="client@enterprise.domain" 
                 required 
@@ -621,7 +480,9 @@ export default function Portfolio() {
                 onChange={(e) => setEmail(e.target.value)} 
                 className="w-full px-4 py-3 bg-slate-950 border border-slate-900 rounded-xl text-slate-100 focus:outline-none focus:border-cyan-500 text-sm placeholder-slate-700 font-mono" 
               />
-              <textarea 
+              <label htmlFor="contact-message" className="block text-xs font-medium text-slate-200">Your message</label>
+              <textarea
+                id="contact-message"
                 rows={4} 
                 placeholder="Define project parameters, vector pipeline criteria, or handshake parameters..." 
                 required 
@@ -648,13 +509,13 @@ export default function Portfolio() {
               </button>
 
               {status === "success" && (
-                <p className="text-emerald-400 text-xs text-center">
+                <p role="status" className="text-emerald-400 text-xs text-center">
                   Message sent successfully.
                 </p>
               )}
 
               {status === "error" && (
-                <p className="text-red-400 text-xs text-center">
+                <p role="alert" className="text-red-400 text-xs text-center">
                   Message failed. Please try again or email me directly.
                 </p>
               )}
@@ -666,6 +527,7 @@ export default function Portfolio() {
           HAMZA_AHMED_KHAN © {new Date().getFullYear()} · CHANNELS RUNTIME SECURED
         </footer>
       </div>
+      </main>
 
     </div>
   );

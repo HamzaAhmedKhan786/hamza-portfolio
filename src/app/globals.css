@@ -3,6 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-geist-sans: "Segoe UI Variable", "Segoe UI", Arial, sans-serif;
+  --font-geist-mono: "Cascadia Code", "Consolas", monospace;
 }
 
 @theme inline {
@@ -22,5 +24,28 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+section[id] { scroll-margin-top: 6rem; }
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid #67e8f9;
+  outline-offset: 3px;
+}
+
+.portfolio-background-panel {
+  filter: saturate(.82) brightness(.66);
+}
+
+@media (max-width: 640px) {
+  .portfolio-background-panel {
+    background-position: center;
+    filter: saturate(.7) brightness(.38) blur(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .portfolio-background-panel { transition-duration: 0ms; }
 }

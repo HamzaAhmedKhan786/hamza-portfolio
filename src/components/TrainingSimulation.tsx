@@ -44,7 +44,7 @@ export default function TrainingSimulation() {
 
   const generateSvgPath = (type: 'loss' | 'eval' | 'f1') => {
     const totalPoints = 50;
-    let points = [];
+    const points = [];
     
     for (let i = 0; i <= totalPoints; i++) {
       const x = (i / totalPoints) * 300;

@@ -9,12 +9,15 @@ import {
   Box,
   HardDrive,
   CpuIcon,
+  Activity,
+  Cloud,
 } from "lucide-react";
 
 export interface TechStackItem {
   title: string;
   subtitle: string;
   tag: string;
+  status?: string;
   icon: React.ReactNode;
   color: string;
   project: string;
@@ -263,5 +266,42 @@ export const techStackData: Record<string, TechStackItem> = {
     challenge: "Software delivery required clear issue tracking, debugging, and testing workflows.",
     solution: "Used Linux environments, GitHub version control, JIRA boards, Agile workflows, and QA tracking.",
     result: "Improved debugging, sprint tracking, and production-focused delivery.",
+  },
+  evaluation: {
+    title: "RAG & LLM Evaluation",
+    subtitle: "Recall@K, groundedness, RAGAS, DeepEval",
+    tag: "AI Evaluation",
+    icon: <Activity size={16} />,
+    color: "text-purple-400 bg-purple-950/40 border-purple-500/20 hover:border-purple-500/60",
+    project: "Legal AI & Retrieval Workflows",
+    technologies: ["Retrieval Recall@K", "Groundedness", "Hallucination Detection", "RAGAS", "DeepEval", "LangSmith"],
+    challenge: "Legal AI responses need traceable sources and quality checks before they are useful in sensitive workflows.",
+    solution: "Applied source attribution, retrieval and groundedness evaluation concepts to RAG and legal drafting workflows.",
+    result: "Evaluation focus includes retrieval relevance, answer grounding, and hallucination reduction; the resume does not claim a specific measured improvement.",
+  },
+  observability: {
+    title: "LLM Observability & Evaluation",
+    subtitle: "LLM tracing, evaluation & quality",
+    tag: "LLM Observability / AI Quality",
+    status: "Hands-on Experience",
+    icon: <Activity size={16} />,
+    color: "text-amber-400 bg-amber-950/40 border-amber-500/20 hover:border-amber-500/60",
+    project: "RAG & Agentic AI Evaluation",
+    technologies: ["Grafana", "Prometheus", "Langfuse", "DeepEval", "LLM Tracing", "RAG Evaluation", "Hallucination Detection", "Groundedness Evaluation"],
+    challenge: "LLM and RAG systems require visibility into model behavior, retrieval quality, hallucinations, and multi-step execution to identify failures and improve reliability.",
+    solution: "Used Grafana and Prometheus for system monitoring and observability, Langfuse for LLM tracing and observability, and DeepEval for evaluating RAG and LLM responses, including groundedness, hallucination detection, retrieval quality, and response correctness.",
+    result: "Combined infrastructure monitoring with LLM observability and automated AI evaluation, improving visibility into system health, model execution, retrieval failures, hallucinations, and response-quality issues.",
+  },
+  cloud_platforms: {
+    title: "Cloud & Data Platforms",
+    subtitle: "AWS, Azure, GCP + data tooling",
+    tag: "Working Knowledge",
+    icon: <Cloud size={16} />,
+    color: "text-sky-400 bg-sky-950/40 border-sky-500/20 hover:border-sky-500/60",
+    project: "Cloud, Data Engineering & Platform Study",
+    technologies: ["AWS", "Azure", "GCP", "Databricks", "Spark / PySpark", "Airflow", "dbt", "Snowflake", "Kubernetes"],
+    challenge: "AI systems increasingly depend on cloud infrastructure and reliable data pipelines.",
+    solution: "Developed working knowledge of major cloud AI services, ETL/ELT, lakehouse architecture, orchestration, and container platforms.",
+    result: "Presented as working knowledge, not as production deployment experience.",
   },
 };

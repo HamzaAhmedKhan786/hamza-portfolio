@@ -12,9 +12,9 @@ function MatrixGridPoints({ speedMultiplier = 1.0 }) {
   const particleCoordinates = React.useMemo(() => {
     const coords = new Float32Array(total * 3);
     for (let i = 0; i < total; i++) {
-      coords[i * 3] = (Math.random() - 0.5) * 4.5;
-      coords[i * 3 + 1] = (Math.random() - 0.5) * 2.5;
-      coords[i * 3 + 2] = (Math.random() - 0.5) * 1.5;
+      coords[i * 3] = (Math.sin(i * 12.9898) * 43758.5453 % 1) * 2.25;
+      coords[i * 3 + 1] = (Math.sin(i * 78.233) * 12345.6789 % 1) * 1.25;
+      coords[i * 3 + 2] = (Math.sin(i * 39.425) * 24680.1357 % 1) * 0.75;
     }
     return coords;
   }, []);

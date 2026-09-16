@@ -26,6 +26,7 @@ const groups: {
       "models_bert",
       "nlp_ner",
       "supervised",
+      "evaluation",
     ],
   },
   {
@@ -47,7 +48,7 @@ const groups: {
     icon: <Box size={12} />,
     activeBorder: "border-amber-500",
     titleColor: "text-amber-500",
-    items: ["devops", "management"],
+    items: ["devops", "observability", "cloud_platforms", "management"],
   },
 ];
 
@@ -82,7 +83,7 @@ export default function TechStack3D() {
               <span
                 className={`text-[10px] ${group.titleColor} font-bold tracking-wider flex items-center gap-1.5 uppercase`}
               >
-                {group.icon} // {group.title}
+                {group.icon} / {group.title}
               </span>
 
               <div
@@ -141,7 +142,7 @@ export default function TechStack3D() {
                 </div>
 
                 <span className="text-[8px] px-2 py-0.5 rounded bg-slate-950 text-cyan-400 border border-slate-800 font-bold uppercase tracking-wider">
-                  Resume Based
+                  {selected.status ?? (selected.tag.includes("Working Knowledge") ? "Working Knowledge" : "Resume Based")}
                 </span>
               </div>
 
@@ -173,7 +174,7 @@ export default function TechStack3D() {
 
                 <div className="bg-slate-950/90 border border-slate-900 p-4 rounded-xl">
                   <span className="text-[8px] text-emerald-500 font-bold uppercase tracking-widest block mb-2">
-                    // Result
+                    Result
                   </span>
 
                   <p className="text-[11px] text-emerald-400 font-medium leading-relaxed font-sans">
